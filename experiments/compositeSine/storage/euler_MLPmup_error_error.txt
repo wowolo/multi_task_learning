@@ -1,0 +1,72 @@
+Global seed set to 77
+wandb: Currently logged in as: wowolo (math_zurich). Use `wandb login --relogin` to force relogin
+wandb: WARNING Changes to your `wandb` environment variables will be ignored because your `wandb` session has already started. For more information on how to modify your settings with `wandb.init()` arguments, please refer to https://wandb.me/wandb-init.
+wandb: Tracking run with wandb version 0.12.21
+wandb: Run data is saved locally in /cluster/home/scheins/master_thesis/visualization/wandb/run-20220720_141144-1gcpl4f8
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run euler_MLPmup_error_config0
+wandb: ⭐️ View project at https://wandb.ai/math_zurich/visualization
+wandb: 🚀 View run at https://wandb.ai/math_zurich/visualization/runs/1gcpl4f8
+GPU available: True, used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+Global seed set to 77
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 1, MEMBER: 2/8
+Global seed set to 77
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 2, MEMBER: 3/8
+Global seed set to 77
+Global seed set to 77
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 3, MEMBER: 4/8
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 4, MEMBER: 5/8
+Global seed set to 77
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 5, MEMBER: 6/8
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 0, MEMBER: 1/8
+Global seed set to 77
+Global seed set to 77
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 6, MEMBER: 7/8
+[34m[1mwandb[0m: Currently logged in as: [33mwowolo[0m ([33mmath_zurich[0m). Use [1m`wandb login --relogin`[0m to force relogin
+Global seed set to 77
+Initializing distributed: GLOBAL_RANK: 7, MEMBER: 8/8
+----------------------------------------------------------------------------------------------------
+distributed_backend=nccl
+All distributed processes registered. Starting with 8 processes
+----------------------------------------------------------------------------------------------------
+
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 1 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 3 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 6 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 2 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 4 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 5 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+LOCAL_RANK: 7 - CUDA_VISIBLE_DEVICES: [6,7,0,4,2,1,5,3]
+
+  | Name  | Type    | Params
+----------------------------------
+0 | model | NNModel | 67.2 M
+----------------------------------
+67.2 M    Trainable params
+6         Non-trainable params
+67.2 M    Total params
+268.649   Total estimated model params size (MB)
+/cluster/home/scheins/master_thesis/visualization/visual_env/lib64/python3.9/site-packages/pytorch_lightning/trainer/connectors/data_connector.py:240: PossibleUserWarning: The dataloader, train_dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 72 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+  rank_zero_warn(
+/cluster/home/scheins/master_thesis/visualization/visual_env/lib64/python3.9/site-packages/pytorch_lightning/trainer/trainer.py:1933: PossibleUserWarning: The number of training batches (2) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+  rank_zero_warn(
+/cluster/shadow/.lsbatch/1658319086.226015022: line 8: 46548 Killed                  python /cluster/home/scheins/master_thesis/visualization/main.py --experimentbatch_name euler_MLPmup_error --config_trainer accelerator:auto strategy:ddp_find_unused_parameters_false devices:auto auto_select_gpus:False deterministic:False fast_dev_run:False enable_progress_bar:True max_epochs:5 max_time:00:08:10:00
+/cluster/apps/nss/gcc-8.2.0/python/3.9.9/x86_64/lib64/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 6 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

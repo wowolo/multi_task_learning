@@ -1,0 +1,28 @@
+Sanity Checking: 0it [00:00, ?it/s]Sanity Checking:   0% 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0% 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:  50% 1/2 [00:00<00:00,  6.08it/s]Sanity Checking DataLoader 0:  50% 1/2 [00:00<00:00,  6.08it/s]Sanity Checking DataLoader 0: 100% 2/2 [00:00<00:00,  6.08it/s]                                                               Training: 0it [00:00, ?it/s]Training:   0% 0/10 [00:00<?, ?it/s]Epoch 0:   0% 0/10 [00:00<?, ?it/s] Epoch 0:  10% 1/10 [00:06<01:01,  6.83s/it]Epoch 0:  10% 1/10 [00:06<01:01,  6.83s/it]Epoch 0:  10% 1/10 [00:06<01:01,  6.83s/it, loss=437, v_num=l4f8]Epoch 0:  20% 2/10 [00:07<00:28,  3.57s/it, loss=437, v_num=l4f8]Epoch 0:  20% 2/10 [00:07<00:28,  3.57s/it, loss=437, v_num=l4f8]Epoch 0:  20% 2/10 [00:07<00:28,  3.57s/it, loss=242, v_num=l4f8]
+Validation: 0it [00:00, ?it/s][A
+Validation:   0% 0/8 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0% 0/8 [00:00<?, ?it/s][A
+Validation DataLoader 0:  12% 1/8 [00:00<00:00, 282.35it/s][AEpoch 0:  30% 3/10 [00:13<00:31,  4.44s/it, loss=242, v_num=l4f8]Epoch 0:  30% 3/10 [00:13<00:31,  4.44s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  25% 2/8 [00:00<00:00, 175.89it/s][AEpoch 0:  40% 4/10 [00:13<00:19,  3.33s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  38% 3/8 [00:00<00:00, 165.49it/s][AEpoch 0:  50% 5/10 [00:13<00:13,  2.67s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  50% 4/8 [00:00<00:00, 113.31it/s][AEpoch 0:  60% 6/10 [00:13<00:08,  2.23s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  62% 5/8 [00:00<00:00,  6.89it/s] [A
+Validation DataLoader 0:  62% 5/8 [00:00<00:00,  6.89it/s][AEpoch 0:  70% 7/10 [00:14<00:06,  2.01s/it, loss=242, v_num=l4f8]Epoch 0:  70% 7/10 [00:14<00:06,  2.01s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  75% 6/8 [00:00<00:00,  6.89it/s][AEpoch 0:  80% 8/10 [00:14<00:03,  1.76s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0:  88% 7/8 [00:00<00:00,  8.93it/s][A
+Validation DataLoader 0:  88% 7/8 [00:00<00:00,  8.93it/s][AEpoch 0:  90% 9/10 [00:14<00:01,  1.57s/it, loss=242, v_num=l4f8]
+Validation DataLoader 0: 100% 8/8 [00:00<00:00,  8.93it/s][AEpoch 0: 100% 10/10 [00:14<00:00,  1.42s/it, loss=242, v_num=l4f8]Epoch 0: 100% 10/10 [00:14<00:00,  1.42s/it, loss=242, v_num=l4f8]
+                                                          [AEpoch 0: 100% 10/10 [00:14<00:00,  1.42s/it, loss=242, v_num=l4f8]Epoch 0:   0% 0/10 [00:00<?, ?it/s, loss=242, v_num=l4f8]         Epoch 1:   0% 0/10 [00:00<?, ?it/s, loss=242, v_num=l4f8]Epoch 1:  10% 1/10 [00:02<00:20,  2.32s/it, loss=242, v_num=l4f8]Epoch 1:  10% 1/10 [00:02<00:20,  2.32s/it, loss=212, v_num=l4f8]Epoch 1:  20% 2/10 [00:02<00:10,  1.28s/it, loss=212, v_num=l4f8]Epoch 1:  20% 2/10 [00:02<00:10,  1.28s/it, loss=169, v_num=l4f8]
+Validation: 0it [00:00, ?it/s][A
+Validation:   0% 0/8 [00:00<?, ?it/s][A
+Validation DataLoader 0:   0% 0/8 [00:00<?, ?it/s][A
+Validation DataLoader 0:  12% 1/8 [00:00<00:00, 207.81it/s][AEpoch 1:  30% 3/10 [00:09<00:22,  3.22s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  25% 2/8 [00:00<00:00, 130.68it/s][AEpoch 1:  40% 4/10 [00:09<00:14,  2.42s/it, loss=169, v_num=l4f8]Epoch 1:  40% 4/10 [00:09<00:14,  2.42s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  38% 3/8 [00:00<00:00, 86.07it/s] [AEpoch 1:  50% 5/10 [00:09<00:09,  1.94s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  50% 4/8 [00:00<00:00, 66.19it/s][AEpoch 1:  60% 6/10 [00:09<00:06,  1.62s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  62% 5/8 [00:00<00:00, 40.75it/s][A
+Validation DataLoader 0:  62% 5/8 [00:00<00:00, 40.75it/s][AEpoch 1:  70% 7/10 [00:09<00:04,  1.40s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  75% 6/8 [00:00<00:00, 40.75it/s][AEpoch 1:  80% 8/10 [00:09<00:02,  1.22s/it, loss=169, v_num=l4f8]Epoch 1:  80% 8/10 [00:09<00:02,  1.22s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0:  88% 7/8 [00:00<00:00, 40.75it/s][AEpoch 1:  90% 9/10 [00:09<00:01,  1.09s/it, loss=169, v_num=l4f8]
+Validation DataLoader 0: 100% 8/8 [00:00<00:00, 40.75it/s][AEpoch 1: 100% 10/10 [00:09<00:00,  1.02it/s, loss=169, v_num=l4f8]Epoch 1: 100% 10/10 [00:12<00:00,  1.20s/it, loss=169, v_num=l4f8]
+                                                          [AEpoch 1: 100% 10/10 [00:12<00:00,  1.20s/it, loss=169, v_num=l4f8]
