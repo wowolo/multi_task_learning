@@ -1,0 +1,10 @@
+# ignore env
+mtl_env/
+
+# ignore pychache, ipynb
+__pycache__/
+.ipynb_checkpoints/
+
+# ignore the lightning/wandb logs 
+visualization/
+wandb/
