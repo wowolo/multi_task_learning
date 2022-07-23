@@ -98,6 +98,7 @@ Note that the underlying bash script `main_commands.sh` has to be customized bef
 
 
 - wandb logging 
+- ssssooooommmmmmeeeee
 
 $~$
 

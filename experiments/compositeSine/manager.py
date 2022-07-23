@@ -67,8 +67,6 @@ class Manager(BasicManager):
             ind_configs = [i for i in range(self.num_experiments)]
         elif isinstance(ind_configs, int): # or isinstance(ind_configs, float):
             ind_configs = [int(ind_configs)]
-
-        print(ind_configs)
         
         for i in ind_configs:
             

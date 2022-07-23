@@ -63,9 +63,8 @@ def main():
     args = parser.parse_args()
     
     num_config = args.num_config
-    if isinstance(num_config, type(None)):
-        num_config = 1
-    num_config -= 1
+    if not isinstance(num_config, type(None)):
+        num_config -= 1
     
     experimentbatch_name = args.experimentbatch_name
     if isinstance(experimentbatch_name, type(None)):
