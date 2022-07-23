@@ -6,4 +6,4 @@ if [ "$#" -ne 1 ]; then
 	exit 0
 fi
 
-/bin/bash -s $1 "local"
+/bin/bash ./bash_files/main_commands.sh $1 "local"

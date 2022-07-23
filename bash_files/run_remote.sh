@@ -7,8 +7,8 @@ if [ "$#" -ne 1 ]; then
 fi
 
 time=`date +%D_%T`
-tmp_stash=seb_$time
-tmp_branch=seb_$1_$time
+tmp_stash=user_$time
+tmp_branch=user_$1_$time
 
 # update experiments files on git (make it temporary by defining a dedicated branch create delete)
 

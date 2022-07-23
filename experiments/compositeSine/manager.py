@@ -91,7 +91,7 @@ class Manager(BasicManager):
                 logging_epoch_interval=config_custom['logging_epoch_interval']
             )
 
-            project_name = os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
+            project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
             
             model.fit(
                 data_module,

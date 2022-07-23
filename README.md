@@ -15,8 +15,8 @@ $~$
 - [2. Repo Structure](#2-repo-structure)
 - [3. Doing Experiments](#3-doing-experiments)
 - [4. Software Setup](#4-software-setup)
-  - [4.2. Python Packages](#42-python-packages)
   - [4.1. GitHub](#41-github)
+  - [4.2. Python Packages](#42-python-packages)
   - [4.4. Weights & Biases](#44-weights--biases)
   - [4.3. Cluster (Euler)](#43-cluster-euler)
 - [5. Making Changes](#5-making-changes)
@@ -93,33 +93,36 @@ $~$
 Now, the user has the option to run the configuration induced batch of experiments either locally or the (ETH Euler) cluster (similar implementations should be also possible for other clusters). 
 Running the experiments locally, the program can be started by the bash script `run_local.sh`. The *configs_trainer* are supplied by the array defined in the bash script and passed as input argument to the `main.py` program within the bash script.
 Analogously, to run the experiments on the Euler cluste, use the `run_remote.sh` bash script.
-Note that the underlying bash script `main_commands.sh` has to be customized before running either `run_local.sh` or `run_remote.sh`. Furthermore, the setup described in the next section Software Setup is needed to run the experiements without modifications to the code (i.e. Python environment, GitHub, Weights&Biases setup needed).
-
-
-
-- wandb logging 
-- ssssooooommmmmmeeeee
+Note that the underlying bash script `main_commands.sh` (section commented for customization) has to be customized before running either `run_local.sh` or `run_remote.sh`. Furthermore, the setup described in the next section Software Setup is needed to run the experiements without modifications to the code (i.e. Python environment, GitHub, Weights&Biases setup needed).
 
 $~$
 
 # 4. Software Setup
-
-## 4.2. Python Packages
+This sections describes the preparations that should be made software wise to use the complete range of implementations without potential modification to the code.
 
 $~$
 
 ## 4.1. GitHub
-init repo
+It is adviced to copy this remote repository to ones local repository using git as well as creating a remote repository accesible from the cluster. Specifically, the version tracking will be used to make changes to the code locally and launch the updated code via the local bash script (using temporary branches in the case of temporary changes to the configurations, avoiding unnecessary commits in the master branch).
+([Reference](https://kbroman.org/github_tutorial/pages/init.html) for your own repository.) 
+
+$~$
+
+## 4.2. Python Packages
+The Python virtual environment should be generated from the `requirements.txt` file (see [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)) to guarantee that the Python packages fulfill the requirements and be located directly in the project's root directory.
 
 $~$
 
 ## 4.4. Weights & Biases
-.netrc
+Apart from the necessary Python packages leveraging the W&B API, which we have covered by the previous step, you have to login to your (existing) W&B account. See [here (1. Set up wandb)](https://docs.wandb.ai/quickstart) for reference.
+
+> Note that this has to be done for your account on Euler as well if you want to launch jobs on the cluster.
+> Tip: If you encounter probelems with the automatic W&B login, referenced above, one should check in ones .netrc if the necessary login details for W&B are recorded in this file.
 
 $~$
 
 ## 4.3. Cluster (Euler)
-ssh, bash scripts, github repo on cluster (TODO implement updates by creating and deleting branches)
+ssh, bash scripts, github repo on cluster 
 
 $~$
 
