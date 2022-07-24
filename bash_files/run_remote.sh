@@ -6,6 +6,10 @@ if [ "$#" -ne 1 ]; then
 	exit 0
 fi
 
+# CUSTOMIZE #
+ssh_keyword=euler
+#############
+
 time=`date +%D_%T`
 tmp_stash=user_$time
 tmp_branch=user_$1_$time
@@ -21,7 +25,7 @@ git push origin master
 
 # makes ssh connection and execute main commands 
 # TODO: add the name of tmp branch to access for experiments
-cat ./bash_files/main_commands.sh | ssh euler /bin/bash -s $1 "remote" $tmp_branch
+cat ./bash_files/main_commands.sh | ssh $ssh_keyword /bin/bash -s $1 "remote" $tmp_branch
 
 # delete git branch, retrieve stashed changes and delete stash
 git checkout master
