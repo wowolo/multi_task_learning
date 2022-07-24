@@ -8,3 +8,4 @@ __pycache__/
 # ignore the lightning/wandb logs 
 visualization/
 wandb/
+logging_compositeSine/
