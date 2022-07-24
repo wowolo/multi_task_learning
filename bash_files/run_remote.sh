@@ -27,7 +27,7 @@ git push --set-upstream origin $tmp_branch
 cat ./bash_files/main_commands.sh | ssh $ssh_keyword /bin/bash -s $1 "remote" $tmp_branch
 
 # delete git branch, retrieve stashed changes and delete stash
-git push origin --delete seb_temp_branch
+git push origin --delete $tmp_branch
 git checkout master
 git branch -D $tmp_branch
 git stash apply stash^{/${tmp_stash}}

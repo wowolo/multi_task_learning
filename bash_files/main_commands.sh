@@ -51,10 +51,10 @@ elif [ $run_type == "remote" ]; then
 
     # go to main directory and update via github
     cd $project_path_remote
-    git stash
-    git stash clear
-    git pull origin master
-    git pull origin $tmp_branch
+    git reset --hard origin/master
+    git reset --hard origin/$tmp_branch
+    # git pull origin master
+    # git pull origin $tmp_branch
     git checkout $tmp_branch
 
     # ressource allocation

@@ -179,6 +179,8 @@ class LightningMultitask(pl.LightningModule):
         
         trainer.fit(self, data_module)
 
+        return trainer
+
     
 
     def _compute_tasklosses(self, batch, bool_training=True): # convenience function used in the step methods
