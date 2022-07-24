@@ -20,7 +20,7 @@ git checkout -b $tmp_branch
 git stash apply stash^{/${tmp_stash}}
 git add *
 git commit -m "temporary commit on temporary branch for experiments '${1}' on Euler cluster"
-git push -set-upstream origin $tmp_branch
+git push --set-upstream origin $tmp_branch
 
 # makes ssh connection and execute main commands 
 # TODO: add the name of tmp branch to access for experiments

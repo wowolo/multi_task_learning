@@ -54,10 +54,11 @@ elif [ $run_type == "remote" ]; then
     git stash
     git stash clear
     git pull origin master
+    git pull origin $tmp_branch
     git checkout $tmp_branch
 
     # ressource allocation
-    max_time="00:15" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
+    max_time="00:10" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
     n_core="1" # number of core (large value implies low priority)
     memory="46000" # memory allocation (in MB) per core (large value implies low priority)
     scratch="0" # disk space (in MB) for temporary data per core
