@@ -9,3 +9,6 @@ __pycache__/
 visualization/
 wandb/
 logging_compositeSine/
+
+# apple specific stuff
+.DS_Store
