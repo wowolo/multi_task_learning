@@ -10,18 +10,17 @@ fi
 ssh_keyword=euler
 #############
 
-time=`date +%D_%T`
-tmp_stash=seb_temp
-tmp_branch=seb_temp
+tmp_stash=seb_temp_stash
+tmp_branch=seb_temp_branch
 
 # update experiments files on git (make it temporary by defining a dedicated branch create delete)
 
 git stash push -m ${tmp_stash} 
 git checkout -b $tmp_branch
 git stash apply stash^{/${tmp_stash}}
-git add ./experiments/* ./bash_files/*
+git add *
 git commit -m "temporary commit on temporary branch for experiments '${1}' on Euler cluster"
-git push origin master
+git push -set-upstream origin $tmp_branch
 
 # makes ssh connection and execute main commands 
 # TODO: add the name of tmp branch to access for experiments
