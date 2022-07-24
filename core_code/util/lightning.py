@@ -4,7 +4,6 @@ from torch.utils.data import Dataset, DataLoader
 import pytorch_lightning as pl
 from pytorch_lightning.trainer.supporters import CombinedLoader
 
-from core_code.util.default_config import init_config_training
 import core_code.util.helpers as util
 
 
@@ -16,7 +15,7 @@ class CustomDataset(Dataset):
         
         self.x = x
         self.y = y
-        self.task_activity = torch.Tensor(task_activity)
+        self.task_activity = task_activity
 
 
 
@@ -69,54 +68,3 @@ def DataLoaders(x, y, task_activity, num_workers=0, **kwargs):
         data_loaders =  {'task_0': DataLoader(dataset, num_workers=num_workers, **dataloader_dict)}
 
     return CombinedLoader(data_loaders)
-
-
-
-
-class DataModule(pl.LightningDataModule):
-
-    def __init__(self, data, **config_training):
-        super().__init__()
-        self.data = data
-        self.config_training, self.all_tasks = init_config_training(**config_training)
-        self.n_workers = 1 # os.cpu_count()
-
-
-
-    def setup(self, stage=None):
-        # Assign train/val datasets for use in dataloaders
-        if stage == "fit" or stage is None:
-            self.data_train = self.data.create_data('train') 
-            self.data_val = self.data.create_data('val') 
-
-        # Assign test dataset for use in dataloader(s)
-        if stage == "test" or stage is None:
-            self.data_test = self.data.create_data('test') 
-
-
-
-    def train_dataloader(self): # create training data based on 'data_task_batching'
-        data_loaders = DataLoaders(*self.data_train.values(), num_workers=self.n_workers, **self.config_training)
-        return data_loaders
-
-
-
-    def val_dataloader(self): 
-        loader_config = {
-            'batch_size': self.config_training['batch_size'], 
-            'data_task_batching': self.config_training['data_task_batching'],
-            'shuffle': False
-        }
-        data_loaders = DataLoaders(*self.data_val.values(), num_workers=self.n_workers, **loader_config)
-        return data_loaders
-
-
-
-    def test_dataloader(self): 
-        loader_config = {
-            'batch_size': self.config_training['batch_size'], 
-            'data_task_batching': self.config_training['data_task_batching'],
-            'shuffle': False
-        }
-        data_loaders = DataLoaders(*self.data_test.values(), num_workers=self.n_workers, **loader_config)
-        return data_loaders

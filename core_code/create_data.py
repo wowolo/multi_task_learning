@@ -40,7 +40,8 @@ class CreateData():
     def __init__(self, **config_data):
 
         self.config_data, self.all_tasks = init_config_data(**config_data)
-
+        if isinstance(self.all_tasks, type(None)):
+            self.all_tasks = {0}
 
 
     def create_data(self, type):
@@ -62,7 +63,7 @@ class CreateData():
         data_dict = {
             'x': util.to_tensor(x), 
             'y': util.to_tensor(y), 
-            'task_activity': task_activity
+            'task_activity': util.to_tensor(task_activity)
         }
         
         return data_dict
@@ -71,26 +72,17 @@ class CreateData():
 
     def task_data_creator(self, type, task_config, task_num):
 
-        if type == 'train':
-            d_in = task_config['d_in']
-            n_samples = task_config['n_train']
-            x_min = task_config['x_min_train']
-            x_max = task_config['x_max_train']
-            data_generators = task_config['data_generators_train']
+        
+        d_in = task_config['d_in']
+
+        n_samples = task_config['n_{}'.format(type)]
+        x_min = task_config['x_min_{}'.format(type)]
+        x_max = task_config['x_max_{}'.format(type)]
+        data_generators = task_config['data_generators_{}'.format(type)]
+
+        if type == 'train':    
             noise_scale = self.config_data['noise_scale']
-        elif type == 'val':
-            d_in = task_config['d_in']
-            n_samples = task_config['n_val']
-            x_min = task_config['x_min_val']
-            x_max = task_config['x_max_val']
-            data_generators = task_config['data_generators_val']
-            noise_scale = 0
-        elif type == 'test':
-            d_in = task_config['d_in']
-            n_samples = task_config['n_test']
-            x_min = task_config['x_min_test']
-            x_max = task_config['x_max_test']
-            data_generators = task_config['data_generators_test']
+        else:
             noise_scale = 0
 
             

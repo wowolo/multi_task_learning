@@ -133,7 +133,7 @@ There are two steps to be taken to set up everything around Euler to launch jobs
 The first one is to guarantee that a git repository is set up on your Euler account to synchronize changes made to the code locally. See Section 4.1 regarding GitHub. \
 The second one is to configure SSH keys to login to your account without having to repeatedly type the password. Follow the instructions on *SSH keys* by the Euler Cluster Support [here](https://scicomp.ethz.ch/wiki/Accessing_the_clusters). Then customize the ssh_keyword in `bash_files/run_remote.sh`, i.e. you would login by
 ```
-# in bash
+# in shell
 ssh_keyword=... # your “ssh keyword”
 ssh $ssh_keyword 
 ```

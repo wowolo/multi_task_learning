@@ -1,4 +1,5 @@
 import json
+from multiprocessing.sharedctypes import Value
 import torch
 
 
@@ -61,10 +62,11 @@ def check_config(**kwargs):
         if len(all_tasks) == 0:
             all_tasks = temp_set
         elif len(temp_set) > 0:
-            assert all_tasks == temp_set
+            if all_tasks != temp_set:
+                raise ValueError('The task specific configurations are invalid. All values that have task-specific inputs using a dictionary have to assing values for all task keys via their respective dictionaries.')
 
     if len(all_tasks) == 0:
-        all_tasks = {0}
+        all_tasks = None
 
     return all_tasks
 

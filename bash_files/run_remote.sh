@@ -11,8 +11,8 @@ ssh_keyword=euler
 #############
 
 time=`date +%D_%T`
-tmp_stash=user_$time
-tmp_branch=user_$1_$time
+tmp_stash=seb_temp
+tmp_branch=seb_temp
 
 # update experiments files on git (make it temporary by defining a dedicated branch create delete)
 
