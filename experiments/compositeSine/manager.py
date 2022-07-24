@@ -113,16 +113,20 @@ class Manager(BasicManager):
             project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
             
             wandb.login()
-            logger = WandbLogger(
+            wandb.init(
                 project = project_name,
                 name = experimentbatch_name + f'_config{i}',
+            )
+            logger = WandbLogger(
+                # project = project_name,
+                # name = experimentbatch_name + f'_config{i}',
                 log_model=True
             )
-            logger.experiment.config.update(config_data)
-            logger.experiment.config.update(config_architecture)
-            logger.experiment.config.update(config_training)
-            logger.experiment.config.update(config_custom)
-            logger.experiment.config.update(config_trainer)
+            wandb.config.update(config_data)
+            wandb.config.update(config_architecture)
+            wandb.config.update(config_training)
+            wandb.config.update(config_custom)
+            wandb.config.update(config_trainer)
 
             model.fit(
                 data_module,
