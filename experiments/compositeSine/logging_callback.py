@@ -50,7 +50,7 @@ class LoggingCallback(Callback):
             'y': [],
             'task_activity': [],
             'preds': [],
-            'loss': [],
+            'losses': [],
             'data_len': []
         } 
         return state
@@ -70,7 +70,7 @@ class LoggingCallback(Callback):
             data_len = _x.shape[0]
             
             self.state_train['data_len'].append(data_len)
-            self.state_train['loss'].append(outputs['loss'])
+            self.state_train['losses'].append(outputs['losses'])
 
 
 
@@ -92,16 +92,16 @@ class LoggingCallback(Callback):
             _preds = outputs['preds']
 
             # log validation loss
-            loss = torch.zeros((1), requires_grad=False).type_as(_x)
+            loss = {}
 
-            for task_num in torch.unique(_task_activity):
+            for task_num in torch.unique(_task_activity).int():
 
                 task_config = util.extract_taskconfig(pl_module.config_training, task_num)
                 _ind = (_task_activity == task_num)
                 criterion = _criterion_fm(task_config['criterion'])
-                loss = loss + criterion(_preds[_ind], _y[_ind])
+                loss['task_{}'.format(task_num)] = criterion(_preds[_ind], _y[_ind])
 
-            self.state_val['loss'].append(loss)
+            self.state_val['losses'].append(loss)
 
             if trainer.current_epoch % self.logging_epoch_interval == 1 or (trainer.current_epoch == (trainer.max_epochs-1)):
                 self.state_val['x'].append(_x)
@@ -116,14 +116,19 @@ class LoggingCallback(Callback):
         trainer: Trainer, 
         pl_module: LightningModule
     ) -> None:
-        # (data) weighted epoch loss
-        data_len = self.state_train['data_len']
-        epoch_loss = torch.sum(torch.Tensor([self.state_train['loss'][i] * data_len[i] for i in range(len(data_len))])) / torch.sum(torch.Tensor(data_len))
+        # data weighted loss per task
+        loss_dict = self._compute_epochloss(self.state_train)
         
-        trainer.logger.experiment.log({'train/loss': epoch_loss, 'epoch': trainer.current_epoch, 'global_step': trainer.global_step})
+        for key in loss_dict.keys():
+            epoch_task_loss = loss_dict[key]
 
-        if torch.isnan(epoch_loss):
-            trainer.should_stop = True
+            trainer.logger.experiment.log({
+                'train/loss_' + key: epoch_task_loss, 
+                'epoch': trainer.current_epoch, 
+                'global_step': trainer.global_step
+            })
+            if torch.isnan(epoch_task_loss):
+                trainer.should_stop = True
 
         self.state_train = self._empty_state()
 
@@ -135,15 +140,26 @@ class LoggingCallback(Callback):
         pl_module: LightningModule
     ) -> None: 
         # (data) weighted epoch loss
-        data_len = self.state_val['data_len']
-        epoch_loss = torch.sum(torch.Tensor([self.state_val['loss'][i] * data_len[i] for i in range(len(data_len))])) / torch.sum(torch.Tensor(data_len))
+        # data weighted loss per task
+        loss_dict = self._compute_epochloss(self.state_val)
         
-        trainer.logger.experiment.log({'validation/loss': epoch_loss, 'epoch': trainer.current_epoch, 'global_step': trainer.global_step})
-        
+        for key in loss_dict.keys():
+            epoch_task_loss = loss_dict[key]
+
+            trainer.logger.experiment.log({
+                'validation/loss_' + key: epoch_task_loss, 
+                'epoch': trainer.current_epoch, 
+                'global_step': trainer.global_step
+            })
+            if torch.isnan(epoch_task_loss):
+                trainer.should_stop = True
+
+
         if trainer.global_rank == 0:
             if (trainer.current_epoch % self.logging_epoch_interval == 1) or (trainer.current_epoch == (trainer.max_epochs-1)): # plot the images based on the states collected over the epoch
                 
                 del self.state_val['data_len']
+                del self.state_val['losses']
                 self.state_val = {key: torch.concat(self.state_val[key]).cpu() for key in self.state_val.keys()}
 
                 # determine the plots we want to log and log them with self._log_plot
@@ -160,8 +176,20 @@ class LoggingCallback(Callback):
 
         self.state_val = self._empty_state() # important to keep emptying the chached data in state_val when not needed!
 
+    def _compute_epochloss(self, state_dict):
+        data_len = state_dict['data_len']
+        complete_len = sum(data_len)
+        loss_tasks = set.union(*[set(loss_dict.keys()) for loss_dict in state_dict['losses']])
 
-            
+        loss_task_dict = dict.fromkeys(loss_tasks, 0)
+        for i, loss_dict in enumerate(state_dict['losses']):
+            for key in loss_dict.keys():
+                loss_task_dict[key] += loss_dict[key] * data_len[i] / complete_len
+        
+        return loss_task_dict
+
+
+
     def _log_plot(
         self,
         trainer,

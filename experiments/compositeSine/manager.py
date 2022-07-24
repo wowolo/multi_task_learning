@@ -1,12 +1,14 @@
 import os
 import pytorch_lightning as pl
 
+import wandb
+from pytorch_lightning.loggers import WandbLogger
+
 from experiments.compositeSine.logging_callback import LoggingCallback 
 
 from core_code.create_data import CreateData
 from core_code.create_model import CreateModel
-from core_code.util.lightning import DataModule
-from core_code.lightning_model import LightningModel
+from core_code.lightning_multitask import DataModule, LightningMultitask
 
 from experiments.util import BasicManager
 from core_code.util.default_config import _make_init_config
@@ -74,8 +76,25 @@ class Manager(BasicManager):
             config_data = self.configs_data_list[i]
             config_architecture = self.configs_architecture_list[i]
             config_training = self.configs_training_list[i]
-            config_custom = self.configs_custom_list[i]
             config_trainer = self.configs_trainer_list[i]
+            config_custom = self.configs_custom_list[i]
+
+
+            # check the configs to avoid error later on
+            _config_architecture = config_architecture.copy()
+            del _config_architecture['d_in']
+            del _config_architecture['d_out']
+            del _config_architecture['f_true']
+            from core_code.util.helpers import check_config
+            all_configs = dict( 
+                **config_data, 
+                **_config_architecture,
+                **config_training, 
+                **config_trainer,
+                **config_custom
+            )
+            check_config(**all_configs)
+
 
             # initialize the core objects#
             pl.seed_everything(config_custom['seed'], config_custom['workers'])
@@ -83,7 +102,7 @@ class Manager(BasicManager):
             torch_model = CreateModel(**config_architecture)
             data_module = DataModule(data, **config_training)
 
-            model = LightningModel(torch_model, **config_training)
+            model = LightningMultitask(torch_model, **config_training)
 
             logging_callback = LoggingCallback(
                 *data.create_data('train').values(), 
@@ -93,12 +112,25 @@ class Manager(BasicManager):
 
             project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
             
+            wandb.login()
+            logger = WandbLogger(
+                project = project_name,
+                name = experimentbatch_name + f'_config{i}',
+                log_model=True
+            )
+            logger.experiment.config.update(config_data)
+            logger.experiment.config.update(config_architecture)
+            logger.experiment.config.update(config_training)
+            logger.experiment.config.update(config_custom)
+            logger.experiment.config.update(config_trainer)
+
             model.fit(
                 data_module,
-                project=project_name, 
-                name=experimentbatch_name + f'_config{i}',
+                logger=logger,
                 callbacks=[
                     logging_callback,
                 ],
                 **config_trainer
             )
+
+            wandb.finish()
