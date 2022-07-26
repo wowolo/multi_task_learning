@@ -52,7 +52,7 @@ configs_training = {
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
     'update_rule': 'SGD',
-    'learning_rate': [0.0001],
+    'learning_rate': {'task_0': 0.001, 'task_1': 0.0001},
     'regularization_alpha': [0.1],
     'regularization_ord': 2,
     'shuffle': True,

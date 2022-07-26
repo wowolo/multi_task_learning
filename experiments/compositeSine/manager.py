@@ -129,10 +129,10 @@ class Manager(BasicManager):
                 **config_trainer
             )
 
-            trainer.logger.config.update(config_data)
-            trainer.logger.config.update(config_architecture)
-            trainer.logger.config.update(config_training)
-            trainer.logger.config.update(config_custom)
-            trainer.logger.config.update(config_trainer)
+            trainer.experiment.logger.config.update(config_data)
+            trainer.experiment.logger.config.update(config_architecture)
+            trainer.experiment.logger.config.update(config_training)
+            trainer.experiment.logger.config.update(config_custom)
+            trainer.experiment.logger.config.update(config_trainer)
 
             wandb.finish()
