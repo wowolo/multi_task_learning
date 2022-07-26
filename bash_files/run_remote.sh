@@ -10,25 +10,9 @@ fi
 ssh_keyword=euler
 #############
 
-tmp_stash=seb_temp_stash
-tmp_branch=seb_temp_branch
-
-# update experiments files on git (make it temporary by defining a dedicated branch create delete)
-
-git stash push -m ${tmp_stash} 
-git checkout -b $tmp_branch
-git stash apply stash^{/${tmp_stash}}
-git add *
-git commit -m "temporary commit on temporary branch for experiments '${1}' on Euler cluster"
-git push --set-upstream origin $tmp_branch
+# update files on Euler based on local files
+bash bash_files/remote_scp.sh
 
 # makes ssh connection and execute main commands 
 # TODO: add the name of tmp branch to access for experiments
-cat ./bash_files/main_commands.sh | ssh $ssh_keyword /bin/bash -s $1 "remote" $tmp_branch
-
-# delete git branch, retrieve stashed changes and delete stash
-git push origin --delete $tmp_branch
-git checkout master
-git branch -D $tmp_branch
-git stash apply stash^{/${tmp_stash}}
-git stash drop stash@{0}
+cat ./bash_files/main_commands.sh | ssh $ssh_keyword /bin/bash -s $1 "remote" 

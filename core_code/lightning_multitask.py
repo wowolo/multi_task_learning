@@ -135,7 +135,8 @@ class LightningMultitask(pl.LightningModule):
         """Initialize the multi task class with (task-specific) model(s).
 
         Args:
-            models (Union[torch.nn.Module, dict[torch.nn.Module]]): (Task-specific) PyTorch model(s).
+            models (Union[torch.nn.Module, dict[torch.nn.Module]]): (Task-specific) PyTorch model(s), i.e., either one PyTorch models or 
+            various PyTorch models in a dictionary as values with their associated tasks as keys (in the format 'task_{i}', i-th task).
         """
 
         super(LightningMultitask, self).__init__()
@@ -307,6 +308,7 @@ class LightningMultitask(pl.LightningModule):
         Returns:
             pl.Trainer: pl.Trainer object which has been used for the training of the model(s).
         """
+        
         config_trainer = init_config_trainer(**config_trainer)
 
         # check configs
@@ -388,6 +390,7 @@ class LightningMultitask(pl.LightningModule):
         Returns:
             list[torch.tensor]: List of torch tensors of the form (x, y, task_activity) retrieved from the batch. 
         """
+
         x = []
         y = []
         task_activity = []

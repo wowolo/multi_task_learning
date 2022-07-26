@@ -3,6 +3,8 @@ from sklearn.model_selection import ParameterGrid
 
 
 class BasicManager():
+    """ Methods to read in and create the parameter grid. As a parent class this is inherited to all 
+    Manager children classes. """
 
     @staticmethod
     def dictvals_to_list(dict):
@@ -16,6 +18,13 @@ class BasicManager():
 
 
     def grid_config_lists(self, *args): 
+        """Input an arbitrary amount of configuration dictionaries and derive their joint parameter grid.
+
+        Returns:
+            list[list]: Return for each input dictionary a list of dictionaries corresponding to the derived grid. 
+            The result is a list of lists with configuration dictionaries where the inner lists all have the length
+            of the total number of data points in the parameter grid. 
+        """
 
         configs = {}
         for config in args:

@@ -127,9 +127,9 @@ class Manager(BasicManager):
                 **config_trainer
             )
 
-            trainer.experiment.logger.config.update(config_data)
-            trainer.experiment.logger.config.update(config_architecture)
-            trainer.experiment.logger.config.update(config_training)
+            trainer.experiment.logger.config.update(data.config_data)
+            trainer.experiment.logger.config.update(torch_model.config_architecture)
+            trainer.experiment.logger.config.update(model.config_training) # alternatively: data_module.config_training
             trainer.experiment.logger.config.update(config_custom)
             trainer.experiment.logger.config.update(config_trainer)
 

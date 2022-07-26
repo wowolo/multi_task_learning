@@ -47,15 +47,6 @@ elif [ $run_type == "remote" ]; then
     echo "start"
     echo "#######################################################"
 
-    tmp_branch=${3}
-
-    # go to main directory and update via github
-    cd $project_path_remote
-    git reset --hard origin/master
-    git reset --hard origin/$tmp_branch
-    # git pull origin master
-    # git pull origin $tmp_branch
-    git checkout $tmp_branch
 
     # ressource allocation
     max_time="00:10" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
