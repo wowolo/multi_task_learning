@@ -75,14 +75,6 @@ def main():
         config_trainer = {}
 
 
-    # num_config = args.JOB_INDEX
-    # if isinstance(num_config, type(None)):
-    #     num_config = 1
-    # num_config -= 1
-
-
-    # config_trainer['fast_dev_run'] = True ######tmp
-
     manager = Manager(
         configs_data, 
         configs_architecture, 

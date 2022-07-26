@@ -41,8 +41,6 @@ class Manager(BasicManager):
     def init_configs_custom(**kwargs):
 
         default_extraction_strings = {
-            'logger': True,
-            'callbacks': True,
             'seed': 77,
             'workers': True,
             'logging_epoch_interval': 50

@@ -61,8 +61,6 @@ configs_training = {
 
 # configs customised for the specific experiment setup
 configs_custom = {
-    'logger': True,
-    'callbacks': True,
     'seed': 77,
     'workers': True,
     'logging_epoch_interval': 2 # >= 2
