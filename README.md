@@ -22,12 +22,12 @@ $~$
 - [3. Doing Experiments](#3-doing-experiments)
 - [4. Software Setup](#4-software-setup)
   - [4.1. GitHub](#41-github)
-  - [4.2. Python Packages](#42-python-packages)
+  - [4.2. Python Virtual Environment](#42-python-virtual-environment)
   - [4.3. Weights & Biases](#43-weights--biases)
   - [4.4. Cluster (Euler)](#44-cluster-euler)
 - [5. Making Changes](#5-making-changes)
   - [5.1. New Experiment (some guideline ideas)](#51-new-experiment-some-guideline-ideas)
-  - [5.2. New Configs Items / Change Default Configs](#52-new-configs-items--change-default-configs)
+  - [5.2. Change Config Items and their Default Values](#52-change-config-items-and-their-default-values)
   - [5.3. Data](#53-data)
   - [5.4. Model(s)](#54-models)
   - [5.5. Batching (batch creation in training)](#55-batching-batch-creation-in-training)
@@ -111,45 +111,47 @@ All these dictionaries have fixed keys (set in `core_code/util/default_config.py
 $~$
 
 The runs can either be made locally or remotely on the Euler cluster. \
-Running the experiments locally, the program can be started by the bash script `run_local.sh`. The *configs_trainer* is supplied by the array defined in the shell script `bash_files/euler_commands.sh` and passed as input argument to the `main.py` program within the shell script. \
-Analogously, to run the experiments on the Euler cluster, use the `run_remote.sh` bash script. \
-Note that the underlying bash scripts in `bash_files` have to be customized before running either application, `run_local.sh` or `run_remote.sh`.
+Running the experiments locally, the program can be started by the bash script `bash_files/run_local.sh`. The *configs_trainer* is supplied by the array defined in the shell script `bash_files/euler_commands.sh` and passed as input argument to the `main.py` program within the shell script. \
+Analogously, to run the experiments on the Euler cluster, use the `bash_files/run_remote.sh` bash script. \
+Note that **all** the underlying bash scripts in `bash_files` have to be customized before running either application, `run_local.sh` or `run_remote.sh`. (These section are marked by a *CUSTOMZE* comment environment in each shell shell script.)
 
 $~$
 
 # 4. Software Setup
-This sections describes the preparations that should be made software wise to use the complete range of implementations without potential modification to the code.
+This sections describes the software setup in which the code has been developed and all applications work without modifications. However, feel free to make any adjustments that you feel might work for you!
 
 $~$
 
 ## 4.1. GitHub
 
-It is adviced to copy this remote repository to ones local repository using git as well as creating a remote repository accesible from the cluster. Specifically, the version tracking will be used to make changes to the code locally and launch the updated code via the local bash script (using temporary branches in the case of temporary changes to the configurations, avoiding unnecessary commits in the master branch). \
-([Reference](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for your own repository.) 
+The first step would be to clone the repository on your own device. \
+(See the GitHub [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).) 
 
 $~$
 
-## 4.2. Python Packages
+## 4.2. Python Virtual Environment
 
-The Python virtual environment should be generated from the `requirements.txt` file (see [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)) to guarantee that the Python packages fulfill the requirements and be located directly in the project's root directory.
+The Python virtual environment should be created directly in the root directory. Then, after activating the environment you can use *pip* and the `requirements.txt` file to download all the right packages and the right versions. See [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)) for a complete instruction on all the necessary steps.
 
 $~$
 
 ## 4.3. Weights & Biases
 
-Apart from the necessary Python packages leveraging the W&B API, which we have covered by the previous step, you have to login to your (existing) W&B account. See [here (1. Set up wandb)](https://docs.wandb.ai/quickstart) for reference.
+Apart from the Python W&B API, which we is already included in your virtual environment after the previous step, you also have to login to your (existing) W&B account. See [here (1. Set up wandb)](https://docs.wandb.ai/quickstart) for the complete reference in order to automatically connect to your W&B account on each session to your device.
 
-> Note that this has to be done for your account on Euler as well if you want to launch jobs on the cluster.
-> Tip: If you encounter probelems with the automatic W&B login, referenced above, one should check in ones .netrc if the necessary login details for W&B are recorded in this file.
+$~$
+
+> Note that this has to be done for your account on Euler as well if you want to launch jobs on the cluster. 
+
+> Personal tip: If you encounter probelems with the automatic W&B login, referenced above, one can check in the .netrc (user) directory if the necessary login details for W&B are recorded in this file. If not a quick google search might and help you in this step.
 
 $~$
 
 ## 4.4. Cluster (Euler)
 
 There are two steps to be taken to set up everything around Euler in order to be able launch jobs on Euler locally via the local bash script `bash_files/run_remote.sh`. \
-The first one is to guarantee that a git repository is set up on your Euler account to synchronize changes made to the code locally and create the the Python virtual environment from `requirements.txt`. See Section 4.1 regarding GitHub and [here](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) regarding the virtual environment. \
-The second one is to configure the SSH keys to login to your account without having to repeatedly type the password. Follow the instructions on *SSH keys* by the Euler Cluster Support [here](https://scicomp.ethz.ch/wiki/Accessing_the_clusters). \
-Lastly, customize your bash_files. For the ssh_keyword in `bash_files/run_remote.sh` set it such that you would login by
+The first one would be to create the virtual environment in your remote root directory as well by following the steps in Section 4.2. \
+The second step is to configure the SSH keys to login to your account without having to repeatedly type the password. Follow the instructions on *SSH keys* by the Euler Cluster Support [here](https://scicomp.ethz.ch/wiki/Accessing_the_clusters). Lastly, when customizing your bash_files set the ssh_keyword in `bash_files/run_remote.sh`, i.e., you would login by
 ```
 # in shell
 ssh_keyword=... # your “ssh keyword”
@@ -158,27 +160,36 @@ ssh $ssh_keyword
 
 $~$
 
-# 5. Making Changes
-
-The code objects within this multi taks learning repository haven been designed with the goal to provide the necessary modularity and degrees of freedom to accomodate various use-cases and potential modifications down the road. We will run through the scenarios which have motivated the code architecture. \
-Moreover, we hope, that in case of a scenario which is not covered in by one of the following sub-sections, the logic and principles of the existing code structure provides a suitable basis to integrate such new scenarios.
+> You need to customize all shell scripts in the bash_files to use the application to run it remotely and locally.
 
 $~$
 
-Ultimately, the goal should be to define the *LightningModel* in `core_code/lightning_model.py` using a (task-specific) PyTorch Lightning *DataModule* from `core_code/util/lightning.py` and (task-specific) PyTorch model(s). This means that any (potentially re-factored/customized) experiment which has these previously mentioned objects can be encapsulated in this repository's multi-task code architecture, providing a uniform structure, the ability to run the code remotely on (mutliple) CPUs or GPUs and log the experiment via W&B.
+# 5. Making Changes
+
+The objects within the `core_code` module have been designed with the goal to allow the user as much modification possibilities as possible. In general, lighter modifications would entail the use of existion parametrizations (and potentially adding new ones) while heavier modifications might result in the complete replacement of `core_code` object by custom ones. \
+Moreover, while we expect that customizations might happen quite frequently, we hope that the code architecture implied by the `core_code` objects create a general framework for all these multi-task neural network experiments and provide a uniform style guide for similar experiments.
+
+$~$
+
+Ultimately, the 'Python goal' of all these experiments should be to define the *LightningMultitask* object in `core_code/lightning_multitask.py` using a PyTorch Lightning *DataModule* from `core_code/util/lightning.py` and (potentially task-specific) PyTorch model(s). This means that any experiment which can be build upon these objects can also be encapsulated in this repository's multi-task code architecture. And hence results in a uniform structure and can be neatly wrapped into the PyTorch Lightning package and connected to the W&B API with limited added effort and a high degree of customization.
 
 $~$
 
 ## 5.1. New Experiment (some guideline ideas)
 
-The current idea for creating new experiments is to create a new directory in the exisiting `experiments/` directory and define at its core the respective *Manager* class which inherits the methods to create parameter grids based on the given configurations in `experiments/[new_experiment]/configs.py` from its parent class *BasicManager* in `experiments/util.py`. A *configs_custom* dictionary might help to parametrize certain aspects of the manager itself (as done for the *Manager* of the compositeSine experiment).
-Furthermore, the *LoggingCallback* class provides callbacks into the training of the neural network using its parent class *pytorch_lightning.Callback*. These allow to cache metrics/losses/etc. (via state attributes, see `experiments/compositeSine/logging_callback.py`) and also log them via W&B (refer to Section 5.6 for more details).
+One idea for creating a new experiments woudl be to take the following steps: \ 
+Create a new directory called `[new_experiment]` in the exisiting `experiments/` directory and define at its core the *Manager* class in the Python script called `experiments/[new_experiment]/manager.py`. From its parent class *BasicManager* in `experiments/util.py` the class inherits the methods necessary to create parameter grids based on the given configurations. \
+Provide the dictionary configurations in a separate sript called `experiments/[new_experiment]/configs.py`. A *configs_custom* dictionary might help to parametrize certain aspects of the manager itself (as done for the *Manager* of the compositeSine experiment). \
+Furthermore, implement the *LoggingCallback* class in `experiments/[new_experiment]/logging_callback.py` to create callbacks into the PyTorch Lightning training routine of the neural network by using *pytorch_lightning.Callback* as its parent class. You can log any quantities and media but also cache data such as metrics/losses/etc. (via state attributes, see `experiments/compositeSine/logging_callback.py`) for use later on in the training routine. These are logged on W&B (refer to Section 5.6 for more details).
 
 $~$
 
-## 5.2. New Configs Items / Change Default Configs
+## 5.2. Change Config Items and their Default Values
 
-To add new configuration items in the underlying Python dictionaries one has to access the functions in `core_code/util/default_config.py`. There one can also adjust the default values. Note that *configs_custom* however is part of the *Manager* class in `experiments/compositeSine/manager.py`. 
+To change the viable configuration items in the underlying Python dictionaries one has to access the functions in the script `core_code/util/default_config.py`. There one can also adjust the default values. Note that *configs_custom* however is part of the *Manager* class in `experiments/compositeSine/manager.py`. \
+Furthermore, note that for certain config extractions defined in `core_code/util/config_extraction.py` it is possible to provide the value 'custom' and an additional callback that “inserts the relevant function directly”. Refer to the source code in these scripts for the concrete details and options.
+
+$~$
 
 > The functions for initializing/checking the user configurations are named init_config_* and make use of the _make_init_config helper function found in `core_code/util/default_config.py`.
 
@@ -186,25 +197,29 @@ $~$
 
 ## 5.3. Data
 
-TO UPDATE!
-The *CreateData* class in `core_code/create_data.py` creates (noisy) data for a given function. If the intended data cannot be modelled based on such a mechanism or if there exists an already given dataset, the user has the option to introduce its own data. For the training via the PyTorch Lightning *Trainer* the data has to be loaded into a PyTorch *Dataset* and then loaded into a PyTorch *Dataloader* - see `core_code/util/lightning.py` for existing implementations of these two objects. By conforming to the data layout '(x, y, task_activity)' the new data can be embedded into the existing code layout.
+The *CreateData* class in `core_code/create_data.py` provides training, validation and test data for a given function. Any functions can be simply added to the function library in `core_code/util/function_lib.py` and selected via the configurations by the 'f_true' key. \
+If the intended data cannot be modelled by such a mechanism or if want to work with an already given dataset, we have the option to introduce the data by creating our own *DataModule* as in `core_code/lightning_multitask.py`. The first step would be to separate the data into the format (x, y, task_activity) in order to be passed into the *Dataloaders* function in the `core_code/util/lightning.py` script. Next the 'batching_strategy' within the *Dataloaders* function in the same script has to be set. For customization choose among existing strategies, add new batching strategies to the source code directly or set 'batching_strategy' to 'custom' and provide a custom batching strategy via the configuration item with key 'batching_strategy_callback'. Refer to the source code and its documentation for format constraints. In the last step the *DataModule* can be defined with the training, validation (and test) data and the previously defined dataloaders.
 
 $~$
 
 ## 5.4. Model(s)
 
-TO UPDATE!
-Analogously to the previous point regarding data, the user can also introduce their own (task-specific) model(s). These can be any PyTorch model(s) with the only limitation being that these have to align with the input and ouptut dimensions induced by the (task-specific) data.
+Concerning models we can use either one uniform PyTorch model (implying that the tasks need to have identical input and output dimensions) or we can create (task-specific) model(s) which might have intersecting parameters (where input and output dimensions can differ from task to task). Refer to the source code for the *LightningMultitask* class in the `core_code/lightning_multitask.py` script for details. \
+To summarize, we can provide any (task-specific) PyTorch model(s) with the only limitation being that these have to align with the input and ouptut dimensions induced of the associated (task-specific) data. Already implemented architecture can be easily retrieved via the *CreateModel* function in the `core_code/create_model.py` script (where the underlying models are stored in the `core_code/model_lib` directory).
 
 $~$
 
 ## 5.5. Batching (batch creation in training)
 
-The creation of the batches throughout the training of the neural network is dependent on the *DataLoaders* class in `core_code/util/lightning.py` and supplies the data *DataModule* in `core_code/util/lightning.py` and ultimately the LightningModel in `core_code/lightning_model.py` with a task dictionary of train, validation and test dataloaders.
-
+The creation of the batches throughout the training of the neural network is dependent on the *Dataloaders* function in `core_code/util/lightning.py` and supplies the data *DataModule* in `core_code/util/lightning.py` with a task dictionary of train, validation and test dataloaders. These then supply task specific data for the training, validation and test steps respectively in the form of task dictionaries. Find more details regarding the dataloaders in the *Dataloaders* documentation, regarding the training/validation/test steps in the source code of the *LightningMultitask* class in the `core_code/lightning_multitask.py` and also in the general [PyTorch Lightning Documentation](https://pytorch-lightning.readthedocs.io/en/stable/guides/data.html).
 
 $~$
 
 ## 5.6. Logging (via W&B)
 
-In this implemetation we have used the *pytorch_lightning.logger.WandbLogger* to log metrics and plots after setting up the W&B API as outlined in Section 4.3. The logging can be highly customized - our choice to implement this was to create the *LoggingCallback* class to have the best control possible of the logging throughout the training and we can recommend this way of logging for any other experiments due to its flexibility, its uniformity in (code) structure and its modularity. A working implementation can be found in `experiments/compositeSine/logging_callback.py`.
+In the any `[new_experiment]` implementation one can use the object *pytorch_lightning.logger.WandbLogger* as logger to log metrics and medias. The logging can be made experiment agnostic as well as it can be highly customized - this is made possible by the *LoggingCallback* class in the `experiments/[new_experiment]/logging_callback.py` script with the PyTorch Lightning parent class *Callback*. The callbacks allow us access to various points throughout the training, validation and test steps - see the [official PyTorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/stable/extensions/callbacks.html) for more. \
+We recommend this way of logging due to its high modularity, flexibility and uniform code structure. A working implementation can be found in `experiments/[new_experiment]/logging_callback.py`.
+
+$~$
+
+> Recall that the steps in Section 4.3 regarding setting up W&B are necessary in order to make the W&B logging work via with access via the website and its interface.

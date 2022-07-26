@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# example call from root directory:
+# bash bash_files/run_local.sh run_name
+
 # check argument
 if [ "$#" -ne 1 ]; then
     echo "no argument: tag missing"
