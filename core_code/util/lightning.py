@@ -35,13 +35,13 @@ def DataLoaders(x, y, task_activity, num_workers=0, **kwargs):
 
     allowed_keys = list(set(['batch_size', 'shuffle']).intersection(kwargs.keys()))
     dataloader_dict = {key: kwargs[key] for key in allowed_keys}
-    dataloader_dict['batch_size']  = util.dict_extract(dataloader_dict, 'batch_size', 64)
-    dataloader_dict['shuffle']  = util.dict_extract(dataloader_dict, 'shuffle', True)
+    dataloader_dict['batch_size']  = util.dict_extract(dataloader_dict, 'batch_size', None)
+    dataloader_dict['shuffle']  = util.dict_extract(dataloader_dict, 'shuffle', None)
 
-    bool_data_task_batching = util.dict_extract(kwargs, 'data_task_batching', True) # default value
+    batching_strategy = util.dict_extract(kwargs, 'batching_strategy', None) # default value
 
-    # structure the generator by shuffle and data_task_batching
-    if bool_data_task_batching:
+    # structure the generator by shuffle and batching_strategy
+    if batching_strategy == 'deterministic':
         # determine the ratios based on given task_activity and “total” batch size
         unique_activities = torch.unique(task_activity).int()
         _total_activities = [(task_activity == i).sum() for i in unique_activities]
@@ -52,7 +52,7 @@ def DataLoaders(x, y, task_activity, num_workers=0, **kwargs):
         # guarantee that batch size is sufficiently large to sample according to non-zero ratios
         _min_batch_size = sum([ratio > 0 for ratio in _ratios.values()])
         if dataloader_dict['batch_size'] < _min_batch_size:
-            raise ValueError("Since 'data_task_batching' is True and the task_activity indicates that {} tasks are used we need a total 'batch_size' of at least {}.".format(_min_batch_size, _min_batch_size))
+            raise ValueError("Since 'batching_strategy' is True and the task_activity indicates that {} tasks are used we need a total 'batch_size' of at least {}.".format(_min_batch_size, _min_batch_size))
         
         _batch_sizes = {key: max(1, int(_ratios[key] * dataloader_dict['batch_size'])) for key in _ratios.keys()}
         _batch_sizes_val = list(_batch_sizes.values())
@@ -63,8 +63,11 @@ def DataLoaders(x, y, task_activity, num_workers=0, **kwargs):
             _shuffle = {'task_{}'.format(i): dataloader_dict['shuffle'] for i in unique_activities}
         data_loaders = {'task_{}'.format(i): DataLoader(_dataset_partitions['task_{}'.format(i)], batch_size=_batch_sizes['task_{}'.format(i)], shuffle=_shuffle['task_{}'.format(i)], num_workers=num_workers) for i in unique_activities}
     
-    else:
+    elif batching_strategy == 'data_stochastic':
         dataset = CustomDataset(x, y, task_activity)
         data_loaders =  {'task_0': DataLoader(dataset, num_workers=num_workers, **dataloader_dict)}
+    
+    else: 
+        raise ValueError("The batching strategy '{}' is not implemented. You might want to add it here, in the class DataLoaders.".format(batching_strategy))
 
     return CombinedLoader(data_loaders)

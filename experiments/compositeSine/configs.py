@@ -48,17 +48,16 @@ configs_data.update(config_function)
 # configs for model training
 configs_training = {
     'batch_size': 64, 
-    'data_task_batching': True, # bool
-    'learning_rate': [0.0001],
-    'update_rule': 'SGD',
-    'regularization_alpha': [0.1],
-    'regularization_ord': 2,
+    'batching_strategy': 'data_deterministic',
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
+    'update_rule': 'SGD',
+    'learning_rate': [0.0001],
+    'regularization_alpha': [0.1],
+    'regularization_ord': 2,
     'shuffle': True,
 }
 
-# configs trainer from bash file, else from default config
 
 # configs customised for the specific experiment setup
 configs_custom = {

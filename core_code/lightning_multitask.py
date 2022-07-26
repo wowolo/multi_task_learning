@@ -35,7 +35,7 @@ class DataModule(pl.LightningDataModule):
 
 
 
-    def train_dataloader(self): # create training data based on 'data_task_batching'
+    def train_dataloader(self): # create training data based on 'batching_strategy'
         data_loaders = DataLoaders(*self.data_train.values(), num_workers=self.n_workers, **self.config_training)
         return data_loaders
 
@@ -44,7 +44,7 @@ class DataModule(pl.LightningDataModule):
     def val_dataloader(self): 
         loader_config = {
             'batch_size': self.config_training['batch_size'], 
-            'data_task_batching': self.config_training['data_task_batching'],
+            'batching_strategy': self.config_training['batching_strategy'],
             'shuffle': False
         }
         data_loaders = DataLoaders(*self.data_val.values(), num_workers=self.n_workers, **loader_config)
@@ -55,7 +55,7 @@ class DataModule(pl.LightningDataModule):
     def test_dataloader(self): 
         loader_config = {
             'batch_size': self.config_training['batch_size'], 
-            'data_task_batching': self.config_training['data_task_batching'],
+            'batching_strategy': self.config_training['batching_strategy'],
             'shuffle': False
         }
         data_loaders = DataLoaders(*self.data_test.values(), num_workers=self.n_workers, **loader_config)

@@ -46,7 +46,7 @@ def init_config_training(**kwargs):
         'regularization_ord': 2,
         'update_rule': 'Adam',
         'learning_rate': 0.0001,
-        'data_task_batching': True,
+        'batching_strategy': 'data_deterministic',
     }
 
     return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed
