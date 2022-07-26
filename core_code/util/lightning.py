@@ -54,7 +54,7 @@ def DataLoaders(
     y: torch.tensor, 
     task_activity: torch.tensor, 
     num_workers: int = 0, 
-    callback: Callable[[torch.tensor, torch.tensor, torch.tensor, int, dict], list[DataLoader]] = None,
+    # callback: Callable[[torch.tensor, torch.tensor, torch.tensor, int, dict], list[DataLoader]] = None,
     **kwargs
 ) -> CombinedLoader: 
     """Create the dataloaders for the given task. The construction is dependent on the optiona arguments. 
@@ -65,13 +65,13 @@ def DataLoaders(
         y (torch.tensor): y values with shape[0] = n.
         task_activity (torch.tensor): Associated task activty values with shape = (n).
         num_workers (int, optional): Number of workers in the torch.DataLoaders objects. Defaults to 0.
-        callback (Callable, optional): Callback to insert custom batching strategy (see source code). This is only relevant if 
-        batching_strategy=='custom'.
     
     Optional arguments:
         batch_size (str): Total batch size.
         shuffle (bool): Determines whether the given data is shuffled (x, y, task_activity) is shuffled before we train.
         batching_strategy (str): Determines the type of batching strategy that we want to employ (which might be task specific).
+        batching_callback (Callable[[torch.tensor, torch.tensor, torch.tensor, int, dict], list(DataLoader)): Callback to insert 
+        custom batching strategy (see source code). This is only relevant if batching_strategy=='custom'.
 
     Raises:
         ValueError: Raised if the value of 'batching_strategy' is not known. See the source code for reference of viable 
@@ -90,6 +90,7 @@ def DataLoaders(
     dataloader_dict['shuffle']  = util.dict_extract(dataloader_dict, 'shuffle', None)
 
     batching_strategy = util.dict_extract(kwargs, 'batching_strategy', None) # default value
+    batching_callback = util.dict_extract(kwargs, 'batching_callback', None) # default value
 
     # structure the generator by shuffle and batching_strategy
     if batching_strategy == 'data_deterministic':
@@ -102,12 +103,13 @@ def DataLoaders(
 
     elif batching_strategy == 'custom':
 
-        data_loaders = callback(x, y, task_activity, num_workers, dataloader_dict)
+        data_loaders = batching_callback(x, y, task_activity, num_workers, dataloader_dict)
 
     else: 
         raise ValueError("The batching strategy '{}' is not implemented. You might want to add it here, in the class DataLoaders.".format(batching_strategy))
 
     return CombinedLoader(data_loaders)
+
 
 
 def _batching_data_deterministic(

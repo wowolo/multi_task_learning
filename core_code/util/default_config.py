@@ -67,6 +67,7 @@ def init_config_training(**kwargs):
         'update_rule_callback': None,
         'learning_rate': 0.0001,
         'batching_strategy': 'data_deterministic',
+        'batching_callback': None
     }
 
     return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed

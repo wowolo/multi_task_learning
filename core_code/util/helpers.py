@@ -124,7 +124,7 @@ def extract_taskconfig(
     config: dict, 
     task_num: int
 ) -> dict:
-    """Given a configuration generate the induced configuration for the specified task.
+    """Given a configuration and a specified task generate its induced configuration.
 
     Args:
         config (dict): Given configuration.
