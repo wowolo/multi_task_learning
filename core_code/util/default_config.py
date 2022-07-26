@@ -1,8 +1,22 @@
+from typing import Union
 from core_code.util.helpers import create_config, check_config
 
 
 
-def _make_init_config(default_extraction_strings, **kwargs):
+def _make_init_config(
+    default_extraction_strings: dict, 
+    **kwargs
+) -> tuple[dict, Union[set, None]]:
+    """Central auxiliary function to 'clean' the input configuration and evaluate the induced number of tasks specified by the cleaned configuration.
+
+    Args:
+        default_extraction_strings (dict): Default dictionary of the configurations specifiying the allowed keys and their default value if not 
+        given by the optional arguments in the kwargs.
+
+    Returns:
+        tuple[dict, Union[set, None]]: Tuple consisting of cleaned dictionaries and the induced set of tasks. None is returned in the second
+        argument no task specification has been detected.
+    """
     
     config_data = create_config(kwargs, default_extraction_strings)
     all_tasks = check_config(**config_data)
@@ -10,13 +24,15 @@ def _make_init_config(default_extraction_strings, **kwargs):
     return config_data, all_tasks
 
 
-
 def init_config_data(**kwargs):
+    """ Given the optional user input configuration, clean and fully initialize the data configuration 
+    (by using default values when needed). """
 
     default_extraction_strings = {
         'd_in': None, 
         'd_out': None, 
         'f_true': None,
+        'f_true_callback': None,
         'n_train': 256, 
         'x_min_train': -1, 
         'x_max_train': 1, 
@@ -37,14 +53,18 @@ def init_config_data(**kwargs):
 
 
 def init_config_training(**kwargs):
+    """ Given the optional user input configuration, clean and fully initialize the training configuration 
+    (by using default values when needed). """
 
     default_extraction_strings = {
         'criterion': 'MSELoss',
+        'criterion_callback': None,
         'shuffle': True,
         'batch_size': 64,
         'regularization_alpha': 0.1, 
         'regularization_ord': 2,
         'update_rule': 'Adam',
+        'update_rule_callback': None,
         'learning_rate': 0.0001,
         'batching_strategy': 'data_deterministic',
     }
@@ -54,7 +74,9 @@ def init_config_training(**kwargs):
 
 
 def init_config_abcMLP(**kwargs):
-    # extract necessary hyperparameters
+    """ Given the optional user input configuration, clean and fully initialize the abcMLP architecture configuration 
+    (by using default values when needed). """
+
     default_extraction_strings = {
         'architecture_key': 'abcMLP',
         'd_in': None, 
@@ -65,6 +87,7 @@ def init_config_abcMLP(**kwargs):
         'list_b': [.5 for i in range(6)], # default: mup
         'c': 0, # default: mup
         'hidden_layer_activation': 'ReLU',
+        'hidden_layer_activation_callback': None
     }
     
     return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed
@@ -72,7 +95,8 @@ def init_config_abcMLP(**kwargs):
 
 
 def init_config_Stack(**kwargs):
-    # extract necessary hyperparameters
+    """ Given the optional user input configuration, clean and fully initialize the Stack architecture configuration 
+    (by using default values when needed). """
     default_extraction_strings = {
         'architecture_key': 'Stack',
         'd_in': None, 
@@ -84,7 +108,9 @@ def init_config_Stack(**kwargs):
         'linear_skip_conn': False,
         'linear_skip_conn_width': 32,
         'hidden_bottleneck_activation': 'Identity',
+        'hidden_bottleneck_activation_callback': None,
         'hidden_layer_activation': 'ReLU',
+        'hidden_layer_activation_callback': None
     }
     
     return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed
@@ -92,6 +118,8 @@ def init_config_Stack(**kwargs):
 
 
 def init_config_trainer(**kwargs):
+    """ Given the optional user input configuration, clean and fully initialize the trainer configuration 
+    (by using default values when needed). """
 
     default_extraction_strings = {
         'accelerator': 'auto',

@@ -92,7 +92,7 @@ class LightningMultitask(pl.LightningModule):
     def configure_optimizers(self):        
         # single optimizer if update rule and learning rate are task unspecific
         if (not isinstance(self._config['update_rule'], dict)) and (not isinstance(self._config['learning_rate'], dict)):
-            update = _update_rule_fm(self._config['update_rule'])
+            update = _update_rule_fm(self._config['update_rule'], self._config['update_rule_callback'])
             optimizer = update(self._config['model'].parameters(), lr=self._config['learning_rate'])
             self._optimizer_keys = []
 
@@ -104,7 +104,7 @@ class LightningMultitask(pl.LightningModule):
             for task_num in self.all_config_tasks:
 
                 task_config = util.extract_taskconfig(self._config, task_num)
-                update = _update_rule_fm(task_config['update_rule'])
+                update = _update_rule_fm(task_config['update_rule'], task_config['update_rule_callback'])
                 optimizer = update(task_config['model'].parameters(), lr=task_config['learning_rate'])
                 optimizers['task_{}'.format(task_num)] = optimizer
             
@@ -197,7 +197,7 @@ class LightningMultitask(pl.LightningModule):
             preds[_ind] = task_config['model'].forward(_x)
 
             if bool_training:
-                criterion = _criterion_fm(task_config['criterion'])
+                criterion = _criterion_fm(task_config['criterion'], task_config['criterion_callback'])
                 _loss = criterion(preds[_ind], y[_ind])
 
                 # compute weight decay

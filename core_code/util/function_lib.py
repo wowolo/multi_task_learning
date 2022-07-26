@@ -1,8 +1,19 @@
+from typing import Callable
 import numpy as np
 
-def function_library(function = 'sine', p = [.4, 1., 2.0, -3.0]):
+def function_library(
+    function: str = 'sine', 
+    p: list = [.4, 1., 2.0, -3.0]
+) -> Callable:
+    """Function library.
 
-    '''call a function from our very own library, default is 'sine' '''
+    Args:
+        function (str, optional): String designation of the wanted function (refer to source code for options). Defaults to 'sine'.
+        p (list, optional): Optional parameters supplied as list. Defaults to [.4, 1., 2.0, -3.0].
+
+    Returns:
+        _type_: _description_
+    """
 
 ###########################################################################################################################
 # 1d

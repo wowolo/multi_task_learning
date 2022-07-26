@@ -107,7 +107,7 @@ class CreateData():
 
             task_x[:, d] = temp_func_dict[data_generators[d]](n_samples, x_min[d], x_max[d])
     
-        f_true = _f_true_fm(task_config['f_true'])
+        f_true = _f_true_fm(task_config['f_true'], task_config['f_true_callback'])
 
         task_y = f_true(task_x) + np.random.normal(scale=1, size=(n_samples, task_config['d_out'])) * noise_scale
 

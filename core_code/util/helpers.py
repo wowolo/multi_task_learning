@@ -1,10 +1,25 @@
-import json
-from multiprocessing.sharedctypes import Value
+# import json
+from typing import Union, Sequence
 import torch
 
 
 
-def dict_extract(kwargs, key, default=None):
+def dict_extract(
+    kwargs: dict, 
+    key: str, 
+    default=None
+    ):
+    """Extract a key specific value of a dictionary.
+
+    Args:
+        kwargs (dict): Dictionary from which we want to extract the value.
+        key (str): Key of the wanted value.
+        default (_type_, optional): Default value in case that the key is not contained in the given dictionary. 
+        Defaults to None.
+
+    Returns:
+        _type_: _description_
+    """
     
     if key in kwargs.keys():
         key_val = kwargs[key]
@@ -15,21 +30,43 @@ def dict_extract(kwargs, key, default=None):
 
 
 
-def to_tensor(x):
-    return torch.Tensor(x)
+def to_tensor(x: Sequence) -> torch.tensor:
+    """Transform a suitable input to a torch tensor.
+
+    Args:
+        x (Sequence): Input argument (suitable for tensor transformation by torch.tensor).
+
+    Returns:
+        torch.tensor: Output tensor.
+    """
+
+    return torch.tensor(x)
 
 
 
-def make_jsonable(x):
-    try:
-        json.dumps(x)
-        return x
-    except:
-        return str(x)
+# def make_jsonable(x):
+#     try:
+#         json.dumps(x)
+#         return x
+#     except:
+#         return str(x)
 
 
 
-def create_config(kwargs, default_extraction_strings):
+def create_config(
+    kwargs: dict, 
+    default_extraction_strings: dict
+) -> dict:
+    """Create a configuration dictionary based on optional inputs in kwargs and a default dictionary supplying the allowed keys for the 
+    resulting configuration and its default values.
+
+    Args:
+        kwargs (dict): Optional input arguments given as dictionary.
+        default_extraction_strings (dict): Dictionary with allowed keys and its default values.
+
+    Returns:
+        dict: Generated dictionary.
+    """
 
     config = {string: None for string in default_extraction_strings}
 
@@ -46,7 +83,18 @@ def create_config(kwargs, default_extraction_strings):
 
 
 
-def check_config(**kwargs):
+def check_config(**kwargs) -> Union[set, None]:
+    """Check the input configurations regarding the allowd task specific evaluations and return the set of tasks.
+
+    Raises:
+        ValueError: Raised in the case of a detected format layout of the task dictionaries supplied by the user as values of the
+        input dictionary.
+        ValueError: The items of the input dictionary's task specific values do not specifically designate the same tasks.
+
+    Returns:
+        set: The configuration induced set of tasks. None is returned in the second argument no task specification has been detected.
+    """
+
     all_tasks = set()
     # check values either non dict or dict with task_#num format
     # + check that values
@@ -72,56 +120,56 @@ def check_config(**kwargs):
 
 
 
-def extract_taskconfig(config, task_num):
-        task_config = dict.fromkeys(config.keys())
-        task_key = 'task_' + str(int(task_num))
+def extract_taskconfig(
+    config: dict, 
+    task_num: int
+) -> dict:
+    """Given a configuration generate the induced configuration for the specified task.
 
-        for key in task_config.keys():
-            value = config[key]
-            if isinstance(value, dict):
-                value = value[task_key]
-            task_config[key] = value
+    Args:
+        config (dict): Given configuration.
+        task_num (int): Integer specifying the task.
 
-        return task_config
+    Returns:
+        dict: Task specific configuration.
+    """
 
+    task_config = dict.fromkeys(config.keys())
+    task_key = 'task_' + str(int(task_num))
 
+    for key in task_config.keys():
+        value = config[key]
+        if isinstance(value, dict):
+            value = value[task_key]
+        task_config[key] = value
 
-def dict_to_file(dict, file_path, format='v'):
-    # format: 'v' or 'h'
-    with open(file_path, 'w') as file:
-        if format == 'v':
-            for key, val in dict.items():
-                file.write('{}: {}\n'.format(key, val))
-        else:
-            json_dict = {key: make_jsonable(dict[key]) for key in dict.keys()}
-            file.write(json.dumps(json_dict))
-
+    return task_config
 
 
-def dictvals_to_list(dict):
+
+# def dict_to_file(dict, file_path, format='v'):
+#     # format: 'v' or 'h'
+#     with open(file_path, 'w') as file:
+#         if format == 'v':
+#             for key, val in dict.items():
+#                 file.write('{}: {}\n'.format(key, val))
+#         else:
+#             json_dict = {key: make_jsonable(dict[key]) for key in dict.keys()}
+#             file.write(json.dumps(json_dict))
+
+
+
+def dictvals_to_list(dict: dict) -> dict:
+    """Put all dictionary values, which are not already a list, into a list.
+
+    Args:
+        dict (dict): Input dictionary whose values should be guaranteed lists.
+
+    Returns:
+        dict: Resulting dictionary.
+    """
     for key, val in dict.items():
         if not(isinstance(val, list)):
             dict[key] = [val] 
 
     return dict
-
-
-
-
-class dimred_MSELoss(torch.nn.Module):
-
-    def __init__(self, dimension_activity):
-
-        super(dimred_MSELoss,self).__init__()
-        self.dimension_activity = dimension_activity
-    
-
-    
-    def forward(self, output, target):
-
-        if output.shape[0] == 0: return 0
-
-        dimred_output = output[:, self.dimension_activity]
-        dimred_target = target[:, self.dimension_activity]
-
-        return torch.sum((dimred_output - dimred_target)**2)
