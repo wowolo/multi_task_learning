@@ -57,7 +57,7 @@ Sketch of the repository structure:
         |--- lightning.py
     |--- create_data.py
     |--- create_model.py
-    |--- lightning_model.py
+    |--- lightning_multitask.py
     |--- subREADME.md
 |--- experiments
     |--- compositeSine
@@ -87,32 +87,33 @@ $~$
 
 # 3. Doing Experiments
 
-Using the example of the `compositeSine` experiment, this section describes how one can launch experiments using this repository. Before you run the code you should refer to the next section, software setup, to make the necessary preparations for your experiments. \
-In general, each experiment should have a dedicated *Manager* Python class object, which is initialized with all the user specified configurations and starts the experiment(s) via its *run* method. Once the associated *Manager* is implemented in the `manager.py` file of the respective experiment, analogously to the `compositeSine` experiment, running the experiment is a simple exercise of adjusting the imports at the top of the (pre_)main.py files to load the experiment's configurations from its `configs.py` file and the respective *Manager* object. Furthermore, the code evaluates the given configurations consisting of several Python dictionaries in two steps. The first step allows the user to define several options for (possibly) each parameter and createa grid of configurations with all possible supplied configuration combinations. In the second step, each configuration of the resulting batch of experiments can then be supplied task specific configurations. 
+Using the example of the `compositeSine` experiment, this section describes how one can launch experiments using this repository. Before you actually run the code you should refer to the next section, software setup, to make the necessary preparations for your experiments. \
+In general, each experiment should have a dedicated *Manager* Python class object in `manager.py` , which is initialized with all the user specified configurations for the specific experriment and starts the run(s) via its *run* method. \
+Furthermore, the code evaluates the given configurations consisting of several Python dictionaries in two stages. In the first stage every value in the configuration is put into a list if it is not already one. Then a parameter grid is created by going through all possible combinations of values for the distinct configuration keys. In the second stage each resulting configuration dictionary, which is just one point from the previously created parameter grid, is iterated over. The respective values of one such dictionary are checked for the following question: Is it a task-specific value or is it a value which is valid for all tasks? A task-specific value is given as a dictionary with task keys (of the format 'task_{i}' - i-th task) and the associated values. Correspondingly, any value which is not of type dictionary is evaluated as non task-specific value, i.e., valid for all tasks.
 
 $~$
 
-> Refer to the `experiments/subREADME.md` file for more details and an example of this two step evaluation routine of the configurations.
+> Refer to the `experiments/compositeSine/configs.py` scipt for an example of the resulting format of such configurations.
 
 $~$
 
 The `compositeSine` experiment uses the following dictionaries to parametrize the experiment: 
 - *configs_data* (data specific configurations for the *CreateData* object in `core_code/create_data.py`)
 - *configs_architecture* (architecture specific configurations for the *CreateModel* object in `core_code/create_model.py`)
-- *configs_training* (training specific configurations for the *LightningModel* object in `core_code/lightning_model.py`)
+- *configs_training* (training specific configurations for the *LightningMultitask* object in `core_code/lightning_multitask.py`)
 - *configs_custom* (custom configurations for the experiment's *Manager* object in `experiments/compositeSine/manager.py`)
-- *configs_trainer* (*pytorch_lightning.Trainer* specific configurations for the *LightningModel.fit()* method in `core_code/lightning_model.py` which are directly passed to the *pytorch_lightning.Trainer* object - see [here](https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html) - for training the PyTorch Lightning model; supplied by bash arguments or default values in `core_code/util/default_config.py`)
-
-All these dictionaries have hard coded keys (see `core_code/util/default_config.py` except for custom config see `experiments/compositeSine/manager.py`) which guarantees that all the dictionaries contain exactly these hard coded key by getting rid of any excessive, non-defined items in the input configurations and add possibly missing items based on the supplied default values defined in the respective Python files. The process of adding/deleting configuration items is specificallly described in Section 5.
-
-> The possible configuration parameters are documented by the comments within the respective Python files (except *configs_custom*). 
+- *configs_trainer* (*pytorch_lightning.Trainer* specific configurations for the *LightningModel.fit()* method in `core_code/lightning_model.py` which are directly passed to the *pytorch_lightning.Trainer* object - see [here](https://pytorch-lightning.readthedocs.io/en/stable/common/trainer.html) - for training the PyTorch Lightning model; the configurations are supplied by bash arguments or default values in `core_code/util/default_config.py`)
   
 $~$
 
-Now, the user has the option to run the configuration induced batch of experiments either locally or the (ETH Euler) cluster (similar implementations should be also possible for other clusters). \
-Running the experiments locally, the program can be started by the bash script `run_local.sh`. The *configs_trainer* are supplied by the array defined in the bash script and passed as input argument to the `main.py` program within the bash script. \
-Analogously, to run the experiments on the Euler cluste, use the `run_remote.sh` bash script. \
-Note that the underlying bash script `main_commands.sh` (section commented for customization) has to be customized before running either `run_local.sh` or `run_remote.sh`. Furthermore, the setup described in the next section Software Setup is needed to run the experiements without modifications to the code (i.e. Python environment, GitHub, Weights&Biases setup needed).
+All these dictionaries have fixed keys (set in `core_code/util/default_config.py` except for custom config see `experiments/compositeSine/manager.py`) which guarantees that all the dictionaries contain exactly the necessary keys by getting rid of any excessive, non-defined items in the input configurations and add possibly missing items based on the supplied default values defined in the respective Python files. The process of adding new or deleting old configuration items is specificallly described in Section 5.
+  
+$~$
+
+The runs can either be made locally or remotely on the Euler cluster. \
+Running the experiments locally, the program can be started by the bash script `run_local.sh`. The *configs_trainer* is supplied by the array defined in the shell script `bash_files/euler_commands.sh` and passed as input argument to the `main.py` program within the shell script. \
+Analogously, to run the experiments on the Euler cluster, use the `run_remote.sh` bash script. \
+Note that the underlying bash scripts in `bash_files` have to be customized before running either application, `run_local.sh` or `run_remote.sh`.
 
 $~$
 

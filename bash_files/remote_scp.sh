@@ -1,8 +1,11 @@
 #!/bin/bash
+
+# CUSTOMIZE #
 username=scheins
 remote_dir=/cluster/home/$username/master_thesis/multi_task_learning/
 local_dir=~/dev/master_thesis/multi_task_learning/
 ssh_idrsa=~/.ssh/id_ed25519_euler
+#############
 
 # bash files
 scp -i $ssh_idrsa -r $local_dir/bash_files $username@euler.ethz.ch:$remote_dir

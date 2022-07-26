@@ -11,12 +11,12 @@ run_type=${2}
 
 ################ General input ##################
 
-# CUSTOMIZE START #
+# CUSTOMIZE #
 username=scheins # for Euler
 project_path_local=/Users/sebastianschein/dev/master_thesis/multi_task_learning
 project_path_remote=/cluster/home/$username/master_thesis/multi_task_learning
 python_env=mtl_env
-###################
+#############
 
 # set trainer configurations 
 config_trainer=(
@@ -73,9 +73,6 @@ elif [ $run_type == "remote" ]; then
 
     # display the current queue
     bbjobs
-
-    git checkout master
-    git branch -D $tmp_branch
 
 
     echo "#######################################################"
