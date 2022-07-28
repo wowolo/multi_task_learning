@@ -176,6 +176,8 @@ class LoggingCallback(Callback):
 
         self.state_val = self._empty_state() # important to keep emptying the chached data in state_val when not needed!
 
+
+
     def _compute_epochloss(self, state_dict):
         data_len = state_dict['data_len']
         complete_len = sum(data_len)
@@ -258,6 +260,10 @@ class LoggingCallback(Callback):
                 }
             )
 
+        # if save:
+        #     cwd = os.getcwd()
+        #     os.makedirs(cwd, exist_ok=True)
+        #     plt.savefig(cwd + )
         # io_buf = io.BytesIO()
         # fig.savefig(io_buf, format='png')
         # io_buf.seek(0)

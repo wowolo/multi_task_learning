@@ -13,7 +13,7 @@ configs_architecture = {
     'architecture_key': 'Stack',
     'depth': 3,
     'width': 4096, 
-    'bottleneck_width': 256, # for Stack
+    'bottleneck_width': 4096, # for Stack
     'variable_width': 4096, # for Stack
     'linear_skip_conn': False, # for Stack
     'linear_skip_conn_width': 64, # for Stack
@@ -32,8 +32,8 @@ configs_architecture.update(config_function)
 # configs for data creation
 configs_data = {
     #### (potentially) task specific ####
-    'n_train': {'task_0': 128, 'task_1': 512},
-    'noise_scale': .1,
+    'n_train': {'task_0': 256, 'task_1': 1024},
+    'noise_scale': .2,
     'x_min_train': -2,
     'x_max_train': {'task_0': 0, 'task_1': 2},
     'n_val': 2048,
@@ -47,13 +47,13 @@ configs_data.update(config_function)
 
 # configs for model training
 configs_training = {
-    'batch_size': 64, 
+    'batch_size': 128, 
     'batching_strategy': 'data_deterministic',
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
     'update_rule': 'SGD',
-    'learning_rate': {'task_0': 0.001, 'task_1': 0.0001},
-    'regularization_alpha': [0.1],
+    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, {'task_0': 0.0001, 'task_1': 0.0005}, 0.0001],
+    'regularization_alpha': [0.5, 0.1, 0.05],
     'regularization_ord': 2,
     'shuffle': True,
 }
@@ -63,5 +63,5 @@ configs_training = {
 configs_custom = {
     'seed': 77,
     'workers': True,
-    'logging_epoch_interval': 2 # >= 2
+    'logging_epoch_interval': 200 # >= 2
 }

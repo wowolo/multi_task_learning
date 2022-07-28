@@ -4,8 +4,12 @@
 username=scheins
 remote_dir=/cluster/home/$username/master_thesis/multi_task_learning/
 local_dir=~/dev/master_thesis/multi_task_learning/
+virtual_env=mtl_env
 ssh_idrsa=~/.ssh/id_ed25519_euler
 #############
+
+# # virtual environment
+# scp -i $ssh_idrsa -r $local_dir/$virtual_env $username@euler.ethz.ch:$remote_dir
 
 # bash files
 scp -i $ssh_idrsa -r $local_dir/bash_files $username@euler.ethz.ch:$remote_dir

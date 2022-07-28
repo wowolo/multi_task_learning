@@ -208,7 +208,7 @@ class LightningMultitask(pl.LightningModule):
             dict[dict]: Dictionary with keys 'preds' and 'losses' which have task specific dictionaries as
             respective values.
         """
-
+        torch.autograd.set_detect_anomaly(True) ########temp
         outputs, all_tasks = self._step_computation(batch)
         losses = outputs['losses']
 
@@ -227,12 +227,17 @@ class LightningMultitask(pl.LightningModule):
                 task_key = 'task_{}'.format(task_num)
                 optimizer = optimizers[task_key]
             
-                # optimization step
+                # compute optimizers steps without executing step
                 optimizer.zero_grad()
-                self.manual_backward(losses[task_key])
+                self.manual_backward(losses[task_key], retain_graph=True)
+                
+            for task_num in all_tasks: # repeat loop for optimizer steps
+                task_key = 'task_{}'.format(task_num)
+                optimizer = optimizers[task_key]
                 optimizer.step()
-
-        return outputs
+        
+        with torch.no_grad():
+            return outputs
     
 
 
@@ -334,7 +339,7 @@ class LightningMultitask(pl.LightningModule):
         batch: dict[list], 
         bool_training: bool = True
     ) -> dict[dict]: 
-        """Step computation which differ based whether we are in a training step or not.
+        """Step computation which differs based on whether we are in a training step or not.
 
         Args:
             batch (dict[list]): Task dictionary which has task keys and values of the format (x, y, task_activity).

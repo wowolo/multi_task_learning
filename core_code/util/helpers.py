@@ -40,7 +40,7 @@ def to_tensor(x: Sequence) -> torch.tensor:
         torch.tensor: Output tensor.
     """
 
-    return torch.tensor(x)
+    return torch.tensor(x, dtype=torch.float)
 
 
 

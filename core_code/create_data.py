@@ -172,6 +172,7 @@ class CreateData():
         else:
             noise_scale = 0
 
+        task_key = 'task_{}'.format(task_num)
             
         task_x = np.empty((n_samples, d_in))
 
@@ -204,30 +205,27 @@ class CreateData():
     
 
 
-    def _clean_1dbounds(self, config_data: dict) -> dict:
+    def _clean_1dbounds(self, task_config: dict) -> dict:
         """Helper functions to expand any interval related functions which have only an integer values
         to a list of these integer values with lenght corresponding to the input dimension.
 
         Args:
-            config_data (dict): Data configuration.
+            task_config (dict): Task configuration.
 
         Returns:
-            dict: 'Cleaned' data configuration
+            dict: 'Cleaned' task configuration
         """
 
         for bound_key in ['x_min_train', 'x_max_train', 'x_min_val', 'x_max_val', 'x_min_test', 'x_max_test']:
-            temp_item = {}
-            for task_num in self.all_tasks:
-                # clean if task_specific config is a int or list of len < d_in
-                task_config = util.extract_taskconfig(config_data, task_num)
-                temp_item['task_{}'.format(task_num)] = self._clean_int_or_list(
-                    task_config[bound_key], 
-                    task_config['d_in']
-                )
-            
-            config_data[bound_key] = temp_item
 
-        return config_data
+            value = self._clean_int_or_list(
+                task_config[bound_key], 
+                task_config['d_in']
+            )
+            
+            task_config[bound_key] = value
+
+        return task_config
     
 
 
