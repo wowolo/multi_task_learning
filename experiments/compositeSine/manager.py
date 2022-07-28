@@ -127,10 +127,10 @@ class Manager(BasicManager):
                 **config_trainer
             )
 
-            trainer.experiment.logger.config.update(data.config_data)
-            trainer.experiment.logger.config.update(torch_model.config_architecture)
-            trainer.experiment.logger.config.update(model.config_training) # alternatively: data_module.config_training
-            trainer.experiment.logger.config.update(config_custom)
-            trainer.experiment.logger.config.update(config_trainer)
+            trainer.logger.experiment.config.update(data.config_data)
+            trainer.logger.experiment.config.update(torch_model.config_architecture)
+            trainer.logger.experiment.config.update(model.config_training) # alternatively: data_module.config_training
+            trainer.logger.experiment.config.update(config_custom)
+            trainer.logger.experiment.config.update(config_trainer)
 
             wandb.finish()

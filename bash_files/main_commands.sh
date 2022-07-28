@@ -32,7 +32,7 @@ config_trainer=(
     # precision
     enable_progress_bar:True
     max_epochs:4096
-    max_time:00:09:00:00 # 00:12:00:00 - 12 hours
+    max_time:00:30:50:00 # 00:12:00:00 - 12 hours
 )
 
 #################################################
@@ -47,13 +47,14 @@ elif [ $run_type == "remote" ]; then
     echo "start"
     echo "#######################################################"
 
+    cd $project_path_remote
 
     # ressource allocation
-    max_time="09:10" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
+    max_time="30:55" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
     n_core="1" # number of core (large value implies low priority)
     memory="46000" # memory allocation (in MB) per core (large value implies low priority)
     scratch="0" # disk space (in MB) for temporary data per core
-    n_gpus="8"
+    n_gpus="16"
 
     # get the log filename
     log="${tag}_out.txt"
