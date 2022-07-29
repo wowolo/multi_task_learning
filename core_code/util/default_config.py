@@ -86,7 +86,6 @@ def init_config_abcMLP(**kwargs):
         'depth': 6, 
         'list_a': [-.5] + [0 for i in range(4)] + [.5], # default: mup
         'list_b': [.5 for i in range(6)], # default: mup
-        'c': 0, # default: mup
         'hidden_layer_activation': 'ReLU',
         'hidden_layer_activation_callback': None
     }
@@ -112,6 +111,28 @@ def init_config_Stack(**kwargs):
         'hidden_bottleneck_activation_callback': None,
         'hidden_layer_activation': 'ReLU',
         'hidden_layer_activation_callback': None
+    }
+    
+    return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed
+
+
+
+def init_config_abcStack(**kwargs):
+    """ Given the optional user input configuration, clean and fully initialize the Stack architecture configuration 
+    (by using default values when needed). """
+    default_extraction_strings = {
+        'architecture_key': 'abcStack',
+        'd_in': None, 
+        'd_out': None, 
+        'bottleneck_width': 64, 
+        'variable_width': 128, 
+        'depth': 1, 
+        'hidden_bottleneck_activation': 'Identity',
+        'hidden_bottleneck_activation_callback': None,
+        'hidden_layer_activation': 'ReLU',
+        'hidden_layer_activation_callback': None,
+        'list_a': [-.5] + [0 for i in range(0)] + [.5], # default: mup
+        'list_b': [.5 for i in range(2)], # default: mup
     }
     
     return _make_init_config(default_extraction_strings, **kwargs)[0] # task activity not needed

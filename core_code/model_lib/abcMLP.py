@@ -92,10 +92,6 @@ class NNModel(torch.nn.Module):
         super(NNModel, self).__init__()
 
         self.config_architecture = init_config_abcMLP(**config_architecture)   
-        if isinstance(self.config_architecture['list_a'], int):
-            self.config_architecture['list_a'] = [self.config_architecture['list_a'] for i in range(self.config_architecture['depth'])]
-        if isinstance(self.config_architecture['list_b'], int):
-            self.config_architecture['list_b'] = [self.config_architecture['list_b'] for i in range(self.config_architecture['depth'])] 
         
         self.layers = self.init_architecture()
 

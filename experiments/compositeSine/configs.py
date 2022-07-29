@@ -10,19 +10,19 @@ config_function = {
 
 # configs for model architecture
 configs_architecture = {
-    'architecture_key': 'abcMLP',
-    'depth': 6,
-    'width': 4096, 
-    'bottleneck_width': 4096, # for Stack
-    'variable_width': 4096, # for Stack
+    'architecture_key': 'abcStack',
+    'depth': 3,
+    'width': 2048, 
+    'bottleneck_width': 2046, # for Stack
+    'variable_width': 2046, # for Stack
     'linear_skip_conn': False, # for Stack
     'linear_skip_conn_width': 64, # for Stack
     'skip_conn': False, # for Stack
     'hidden_bottleneck_activation': 'Identity', 
     'hidden_layer_activation': 'ReLU', 
     # for abcMLP
-    'list_a': [[0] + [.5 for i in range(5)]], # [[-.5] + [0 for i in range(4)] + [.5]], # default: mup
-    'list_b': [[0 for i in range(6)]], #[[.5 for i in range(6)]], # default: mup
+    'list_a': [[-.5] + [0 for i in range(4)] + [.5]], # default: mup [[0] + [.5 for i in range(5)]], # NTK  
+    'list_b': [[.5 for i in range(6)]], # default: mup [[0 for i in range(6)]], # NTK [[.5 for i in range(6)]], # default: mup
     # 'list_a': [[0] + [0.5 for i in range(5)]], 
     # 'list_b': [[0 for i in range(6)]], 
     'c': 0, 
@@ -52,8 +52,8 @@ configs_training = {
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
     'update_rule': 'SGD',
-    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, {'task_0': 0.0007, 'task_1': 0.0002}, {'task_0': 0.001, 'task_1': 0.0004}],
-    'regularization_alpha': 0,
+    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, 0.0005, 0.0001],
+    'regularization_alpha': [0.5, 0.05],
     'regularization_ord': 2,
     'shuffle': True,
 }
