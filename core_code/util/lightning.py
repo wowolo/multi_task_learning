@@ -53,7 +53,7 @@ def DataLoaders(
     x: torch.tensor, 
     y: torch.tensor, 
     task_activity: torch.tensor, 
-    num_workers: int = 0, 
+    num_workers: int = 6, 
     # callback: Callable[[torch.tensor, torch.tensor, torch.tensor, int, dict], list[DataLoader]] = None,
     **kwargs
 ) -> CombinedLoader: 

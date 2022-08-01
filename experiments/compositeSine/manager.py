@@ -1,4 +1,5 @@
 import os
+import time
 import pytorch_lightning as pl
 
 import wandb
@@ -94,7 +95,7 @@ class Manager(BasicManager):
             check_config(**all_configs)
 
 
-            # initialize the core objects#
+            # initialize the core objects
             pl.seed_everything(config_custom['seed'], config_custom['workers'])
             data = CreateData(**config_data)
             torch_model = CreateModel(**config_architecture)
@@ -108,15 +109,40 @@ class Manager(BasicManager):
                 logging_epoch_interval=config_custom['logging_epoch_interval']
             )
 
+            config_experiment = {}
+
+            config_experiment.update(data.config_data)
+            config_experiment.update(torch_model.config_architecture)
+            config_experiment.update(model.config_training) # alternatively: data_module.config_training
+            config_experiment.update(config_custom)
+            config_experiment.update(config_trainer)
+
             project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
             
             wandb.login()
             
             logger = WandbLogger(
-                project = project_name,
                 name = experimentbatch_name + f'_config{i}',
-                log_model=True
+                project = project_name,
+                log_model = True,
+                group = torch_model.config_architecture['architecture_key'],
+                config = config_experiment,
+                # settings=wandb.Settings(start_method='fork')
             )
+
+            # # hot fix for clusters -  see https://github.com/wandb/wandb/issues/1409
+            # while True:
+            #     try:
+            #         logger._experiment = wandb.init(
+            #             name=logger._name, 
+            #             project=project_name, 
+            #             config = config_expriment
+            #             # settings=wandb.Settings(start_method="fork")
+            #         )
+            #         break
+            #     except:
+            #         print("Retrying")
+            #         time.sleep(30)
 
             trainer = model.fit(
                 data_module,
@@ -127,10 +153,10 @@ class Manager(BasicManager):
                 **config_trainer
             )
 
-            trainer.logger.experiment.config.update(data.config_data)
-            trainer.logger.experiment.config.update(torch_model.config_architecture)
-            trainer.logger.experiment.config.update(model.config_training) # alternatively: data_module.config_training
-            trainer.logger.experiment.config.update(config_custom)
-            trainer.logger.experiment.config.update(config_trainer)
+            # trainer.logger.experiment.config.update(data.config_data)
+            # trainer.logger.experiment.config.update(torch_model.config_architecture)
+            # trainer.logger.experiment.config.update(model.config_training) # alternatively: data_module.config_training
+            # trainer.logger.experiment.config.update(config_custom)
+            # trainer.logger.experiment.config.update(config_trainer)
 
             wandb.finish()

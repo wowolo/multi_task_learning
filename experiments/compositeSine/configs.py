@@ -13,8 +13,8 @@ configs_architecture = {
     'architecture_key': 'abcStack',
     'depth': 3,
     'width': 2048, 
-    'bottleneck_width': 2046, # for Stack
-    'variable_width': 2046, # for Stack
+    'bottleneck_width': 2048, # for Stack
+    'variable_width': 2048, # for Stack
     'linear_skip_conn': False, # for Stack
     'linear_skip_conn_width': 64, # for Stack
     'skip_conn': False, # for Stack
@@ -52,8 +52,8 @@ configs_training = {
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
     'update_rule': 'SGD',
-    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, 0.0005, 0.0001],
-    'regularization_alpha': [0.5, 0.05],
+    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, 0.0001],
+    'regularization_alpha': [0.0001],
     'regularization_ord': 2,
     'shuffle': True,
 }
