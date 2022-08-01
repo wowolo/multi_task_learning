@@ -70,6 +70,9 @@ class Manager(BasicManager):
             ind_configs = [int(ind_configs)]
         
         for i in ind_configs:
+
+            print('num_config: {}'.format(i))
+            print('len_config: {}'.format(len(self.configs_data_list)))
             
             # manage the grid configurations
             config_data = self.configs_data_list[i]
@@ -111,13 +114,24 @@ class Manager(BasicManager):
 
             config_experiment = {}
 
+            project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
+
             config_experiment.update(data.config_data)
             config_experiment.update(torch_model.config_architecture)
             config_experiment.update(model.config_training) # alternatively: data_module.config_training
             config_experiment.update(config_custom)
             config_experiment.update(config_trainer)
 
-            project_name = 'logging_' + os.path.split(os.path.dirname(os.path.realpath(__file__)))[-1]
+            if model.config_training['regularization_alpha'] > 0:
+                reg_tag = 'weight decay'
+            else:
+                reg_tag = 'no weight decay'
+
+            tags = [
+                torch_model.config_architecture['architecture_key'], 
+                model.config_training['update_rule'],
+                reg_tag
+            ]
             
             wandb.login()
             
@@ -127,22 +141,9 @@ class Manager(BasicManager):
                 log_model = True,
                 group = torch_model.config_architecture['architecture_key'],
                 config = config_experiment,
-                # settings=wandb.Settings(start_method='fork')
+                tags = tags,
+                # settings = wandb.Settings(start_method='fork')
             )
-
-            # # hot fix for clusters -  see https://github.com/wandb/wandb/issues/1409
-            # while True:
-            #     try:
-            #         logger._experiment = wandb.init(
-            #             name=logger._name, 
-            #             project=project_name, 
-            #             config = config_expriment
-            #             # settings=wandb.Settings(start_method="fork")
-            #         )
-            #         break
-            #     except:
-            #         print("Retrying")
-            #         time.sleep(30)
 
             trainer = model.fit(
                 data_module,

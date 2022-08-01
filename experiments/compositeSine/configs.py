@@ -10,15 +10,15 @@ config_function = {
 
 # configs for model architecture
 configs_architecture = {
-    'architecture_key': 'abcStack',
+    'architecture_key': ['abcStack', 'Stack'],
     'depth': 3,
     'width': 2048, 
-    'bottleneck_width': 2048, # for Stack
+    'bottleneck_width': [2048], # for Stack
     'variable_width': 2048, # for Stack
     'linear_skip_conn': False, # for Stack
     'linear_skip_conn_width': 64, # for Stack
     'skip_conn': False, # for Stack
-    'hidden_bottleneck_activation': 'Identity', 
+    'hidden_bottleneck_activation': ['ReLU', 'Identity'], 
     'hidden_layer_activation': 'ReLU', 
     # for abcMLP
     'list_a': [[-.5] + [0 for i in range(4)] + [.5]], # default: mup [[0] + [.5 for i in range(5)]], # NTK  
@@ -51,9 +51,9 @@ configs_training = {
     'batching_strategy': 'data_deterministic',
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
-    'update_rule': 'SGD',
-    'learning_rate': [{'task_0': 0.0005, 'task_1': 0.0001}, 0.0001],
-    'regularization_alpha': [0.0001],
+    'update_rule': 'Adam',
+    'learning_rate': [0.001],
+    'regularization_alpha': [5e-4, 0],
     'regularization_ord': 2,
     'shuffle': True,
 }
@@ -63,5 +63,5 @@ configs_training = {
 configs_custom = {
     'seed': 77,
     'workers': True,
-    'logging_epoch_interval': 200 # >= 2
+    'logging_epoch_interval': 150 # >= 2
 }

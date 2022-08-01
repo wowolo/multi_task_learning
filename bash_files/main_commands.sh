@@ -25,13 +25,12 @@ config_trainer=(
     devices:auto
     auto_select_gpus:False
     deterministic:False
-    # default_root_dir
-    # auto_lr_find:False
+    auto_lr_find:True
     # amp_backend
     fast_dev_run:False
     # precision
     enable_progress_bar:True
-    max_epochs:3024
+    max_epochs:650
     max_time:00:22:50:00 # 00:12:00:00 - 12 hours
 )
 
@@ -51,7 +50,7 @@ elif [ $run_type == "remote" ]; then
 
     # ressource allocation
     max_time="22:55" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
-    n_core="2" # number of core (large value implies low priority)
+    n_core="1" # number of core (large value implies low priority)
     memory="46000" # memory allocation (in MB) per core (large value implies low priority)
     scratch="0" # disk space (in MB) for temporary data per core
     n_gpus="8"

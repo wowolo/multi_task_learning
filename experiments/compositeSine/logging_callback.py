@@ -1,5 +1,6 @@
 # handle all the logging via one callback class
 from typing import Sequence
+import datetime
 import tempfile
 import os
 
@@ -158,6 +159,7 @@ class LoggingCallback(Callback):
         if trainer.global_rank == 0:
             if (trainer.current_epoch % self.logging_epoch_interval == 1) or (trainer.current_epoch == (trainer.max_epochs-1)): # plot the images based on the states collected over the epoch
                 
+                last_plot = (trainer.current_epoch == (trainer.max_epochs-1))
                 del self.state_val['data_len']
                 del self.state_val['losses']
                 self.state_val = {key: torch.concat(self.state_val[key]).cpu() for key in self.state_val.keys()}
@@ -172,6 +174,7 @@ class LoggingCallback(Callback):
                             trainer,
                             task_num,
                             d,
+                            save_pdf=last_plot
                         )
 
         self.state_val = self._empty_state() # important to keep emptying the chached data in state_val when not needed!
@@ -196,7 +199,8 @@ class LoggingCallback(Callback):
         self,
         trainer,
         task_num,
-        d
+        d,
+        save_pdf=False
     ) -> Figure:
 
         fig = plt.figure()
@@ -223,7 +227,7 @@ class LoggingCallback(Callback):
             'o', 
             color=grayscale_list[set_counter], 
             markersize=3, 
-            label='Training data - task {}'.format(task_num)
+            label='Training data'
         )
         set_counter = (set_counter + 1) % len(grayscale_list)
 
@@ -237,9 +241,13 @@ class LoggingCallback(Callback):
         )
         
         # plot the NN prediction on the validation data
-        plt.plot(task_x_val.cpu(), task_preds_val[:,d].cpu(), 'r-', label='Neural network')
+        plt.plot(task_x_val.cpu(), task_preds_val[:,d].cpu(), 'r-', label=r'$\hat{f}$')
+
+        plt.xticks(np.arange(-2, 2.1, step=1))
+
+        plt.ylabel('y-axis')
         
-        plt.title('Task {} - Output dimension {}'.format(task_num, d))
+        plt.title('Output dimension {}'.format(task_num, d))
             
         plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), fancybox=True, ncol=3)
         
@@ -259,6 +267,14 @@ class LoggingCallback(Callback):
                     'epoch': trainer.current_epoch
                 }
             )
+
+        
+        if save_pdf:
+            fig_name = 'validation_task{}_dim{}.pdf'.format(task_num, d)
+            now = datetime.datetime.now()
+            pdf_dir = trainer.default_root_dir + '/pdf_plots/' + trainer.logger.experiment.name + '/' + now.strftime('%Y-%m-%d %H:%M:%S')
+            os.makedirs(pdf_dir, exist_ok=True)
+            fig.savefig(os.path.join(pdf_dir, fig_name))
 
         # if save:
         #     cwd = os.getcwd()
