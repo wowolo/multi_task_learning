@@ -14,6 +14,8 @@ from core_code.lightning_multitask import DataModule, LightningMultitask
 from experiments.util import BasicManager
 from core_code.util.default_config import _make_init_config
 
+import torch
+
 
 
 class Manager(BasicManager):
@@ -73,6 +75,7 @@ class Manager(BasicManager):
 
             print('num_config: {}'.format(i))
             print('len_config: {}'.format(len(self.configs_data_list)))
+            print([torch.cuda.device(i) for i in range(torch.cuda.device_count())])
             
             # manage the grid configurations
             config_data = self.configs_data_list[i]
@@ -134,6 +137,7 @@ class Manager(BasicManager):
             ]
             
             wandb.login()
+            wandb.require(experiment="service")
             
             logger = WandbLogger(
                 name = experimentbatch_name + f'_config{i}',

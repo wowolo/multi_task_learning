@@ -34,7 +34,6 @@ class DataModule(pl.LightningDataModule):
         self._data = data
         self.all_tasks = data.all_tasks
         self.config_training = init_config_training(**config_training)
-        self.n_workers = 1 # os.cpu_count()
 
 
 
@@ -69,7 +68,7 @@ class DataModule(pl.LightningDataModule):
         y = self.data_train['y']
         task_activity = self.data_train['task_activity']
 
-        data_loaders = DataLoaders(x, y, task_activity, num_workers=self.n_workers, **self.config_training)
+        data_loaders = DataLoaders(x, y, task_activity, **self.config_training)
         
         return data_loaders
 
@@ -86,13 +85,10 @@ class DataModule(pl.LightningDataModule):
         x = self.data_val['x']
         y = self.data_val['y']
         task_activity = self.data_val['task_activity']
-        loader_config = {
-            'batch_size': self.config_training['batch_size'], 
-            'batching_strategy': self.config_training['batching_strategy'],
-            'shuffle': False
-        }
+        loader_config = self.config_training
+        loader_config['shuffle'] = False
 
-        data_loaders = DataLoaders(x, y, task_activity, num_workers=self.n_workers, **loader_config)
+        data_loaders = DataLoaders(x, y, task_activity, **loader_config)
         
         return data_loaders
 
@@ -109,13 +105,10 @@ class DataModule(pl.LightningDataModule):
         x = self.data_test['x']
         y = self.data_test['y']
         task_activity = self.data_test['task_activity']
-        loader_config = {
-            'batch_size': self.config_training['batch_size'], 
-            'batching_strategy': self.config_training['batching_strategy'],
-            'shuffle': False
-        }
+        loader_config = self.config_training
+        loader_config['shuffle'] = False
 
-        data_loaders = DataLoaders(x, y, task_activity, num_workers=self.n_workers, **loader_config)
+        data_loaders = DataLoaders(x, y, task_activity, **loader_config)
         
         return data_loaders
 

@@ -49,6 +49,7 @@ configs_data.update(config_function)
 configs_training = {
     'batch_size': 128, 
     'batching_strategy': 'data_deterministic',
+    'num_workers': 16,
     #### (potentially) task specific ####
     'criterion': {'task_0': ('dimred_MSELoss', [0]), 'task_1': ('dimred_MSELoss', list(np.arange(1, 7)))}, 
     'update_rule': 'Adam',

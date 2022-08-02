@@ -159,7 +159,6 @@ class LoggingCallback(Callback):
         if trainer.global_rank == 0:
             if (trainer.current_epoch % self.logging_epoch_interval == 1) or (trainer.current_epoch == (trainer.max_epochs-1)): # plot the images based on the states collected over the epoch
                 
-                last_plot = (trainer.current_epoch == (trainer.max_epochs-1))
                 del self.state_val['data_len']
                 del self.state_val['losses']
                 self.state_val = {key: torch.concat(self.state_val[key]).cpu() for key in self.state_val.keys()}
@@ -174,7 +173,6 @@ class LoggingCallback(Callback):
                             trainer,
                             task_num,
                             d,
-                            save_pdf=last_plot
                         )
 
         self.state_val = self._empty_state() # important to keep emptying the chached data in state_val when not needed!
@@ -200,7 +198,6 @@ class LoggingCallback(Callback):
         trainer,
         task_num,
         d,
-        save_pdf=False
     ) -> Figure:
 
         fig = plt.figure()
@@ -268,13 +265,11 @@ class LoggingCallback(Callback):
                 }
             )
 
-        
-        if save_pdf:
-            fig_name = 'validation_task{}_dim{}.pdf'.format(task_num, d)
-            now = datetime.datetime.now()
-            pdf_dir = trainer.default_root_dir + '/pdf_plots/' + trainer.logger.experiment.name + '/' + now.strftime('%Y-%m-%d %H:%M:%S')
-            os.makedirs(pdf_dir, exist_ok=True)
-            fig.savefig(os.path.join(pdf_dir, fig_name))
+        fig_name = 'validation_task{}_dim{}.pdf'.format(task_num, d)
+        pdf_dir = trainer.default_root_dir + '/pdf_plots/' + trainer.logger.experiment.name + '/' + trainer.logger.experiment.id
+        print(pdf_dir)
+        os.makedirs(pdf_dir, exist_ok=True)
+        fig.savefig(os.path.join(pdf_dir, fig_name))
 
         # if save:
         #     cwd = os.getcwd()

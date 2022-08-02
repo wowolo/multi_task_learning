@@ -53,7 +53,6 @@ def DataLoaders(
     x: torch.tensor, 
     y: torch.tensor, 
     task_activity: torch.tensor, 
-    num_workers: int = 6, 
     # callback: Callable[[torch.tensor, torch.tensor, torch.tensor, int, dict], list[DataLoader]] = None,
     **kwargs
 ) -> CombinedLoader: 
@@ -64,7 +63,6 @@ def DataLoaders(
         x (torch.tensor): x values with shape[0] = n.
         y (torch.tensor): y values with shape[0] = n.
         task_activity (torch.tensor): Associated task activty values with shape = (n).
-        num_workers (int, optional): Number of workers in the torch.DataLoaders objects. Defaults to 0.
     
     Optional arguments:
         batch_size (str): Total batch size.
@@ -84,10 +82,10 @@ def DataLoaders(
 
     task_activity = torch.Tensor(task_activity)
 
-    allowed_keys = list(set(['batch_size', 'shuffle']).intersection(kwargs.keys()))
-    dataloader_dict = {key: kwargs[key] for key in allowed_keys}
-    dataloader_dict['batch_size']  = util.dict_extract(dataloader_dict, 'batch_size', None)
-    dataloader_dict['shuffle']  = util.dict_extract(dataloader_dict, 'shuffle', None)
+    dataloader_dict = {}
+    dataloader_dict['batch_size']  = util.dict_extract(kwargs, 'batch_size', None)
+    dataloader_dict['shuffle']  = util.dict_extract(kwargs, 'shuffle', None)
+    dataloader_dict['num_workers']  = util.dict_extract(kwargs, 'num_workers', None)
 
     batching_strategy = util.dict_extract(kwargs, 'batching_strategy', None) # default value
     batching_callback = util.dict_extract(kwargs, 'batching_callback', None) # default value
@@ -95,15 +93,15 @@ def DataLoaders(
     # structure the generator by shuffle and batching_strategy
     if batching_strategy == 'data_deterministic':
 
-        data_loaders = _batching_data_deterministic(x, y, task_activity, num_workers, dataloader_dict)
+        data_loaders = _batching_data_deterministic(x, y, task_activity, dataloader_dict)
         
     elif batching_strategy == 'data_stochastic':
 
-        data_loaders = _batching_data_stochastic(x, y, task_activity, num_workers, dataloader_dict)
+        data_loaders = _batching_data_stochastic(x, y, task_activity, dataloader_dict)
 
     elif batching_strategy == 'custom':
 
-        data_loaders = batching_callback(x, y, task_activity, num_workers, dataloader_dict)
+        data_loaders = batching_callback(x, y, task_activity, dataloader_dict)
 
     else: 
         raise ValueError("The batching strategy '{}' is not implemented. You might want to add it here, in the class DataLoaders.".format(batching_strategy))
@@ -116,7 +114,6 @@ def _batching_data_deterministic(
     x: torch.tensor, 
     y: torch.tensor, 
     task_activity: torch.tensor, 
-    num_workers: int,
     dataloader_dict: dict
 ) -> list[DataLoader]:
     """Implements the deterministic batching strategy where the task ratio of the data implies the ratio within one batch.
@@ -125,9 +122,8 @@ def _batching_data_deterministic(
         x (torch.tensor): x values with shape[0] = n.
         y (torch.tensor): y values with shape[0] = n.
         task_activity (torch.tensor): Associated task activty values with shape = (n).
-        num_workers (int): Number of workers in the torch.DataLoaders objects.
         dataloader_dict (dict): Dataloader configurations. (Currently allowed keys: batch_size (str), shuffle (str),
-        batching_strategy (str))
+        batching_strategy (str), num_workers (int))
 
     Raises:
         ValueError: Checking the minimum batch sizes in relation to the number of tasks.
@@ -155,7 +151,7 @@ Alternatively, set 'batching_strategy' to batching_data_stochastic.".format(_min
     _dataset_partitions = {'task_{}'.format(i): CustomDataset(x[_ind_taskdatas[i]], y[_ind_taskdatas[i]], task_activity[_ind_taskdatas[i]]) for i in unique_activities}
     if not(isinstance(dataloader_dict['shuffle'], dict)):
         _shuffle = {'task_{}'.format(i): dataloader_dict['shuffle'] for i in unique_activities}
-    data_loaders = {'task_{}'.format(i): DataLoader(_dataset_partitions['task_{}'.format(i)], batch_size=_batch_sizes['task_{}'.format(i)], shuffle=_shuffle['task_{}'.format(i)], num_workers=num_workers) for i in unique_activities}
+    data_loaders = {'task_{}'.format(i): DataLoader(_dataset_partitions['task_{}'.format(i)], batch_size=_batch_sizes['task_{}'.format(i)], shuffle=_shuffle['task_{}'.format(i)], num_workers=dataloader_dict['num_workers']) for i in unique_activities}
     
     return data_loaders
 
@@ -165,7 +161,6 @@ def _batching_data_stochastic(
     x: torch.tensor, 
     y: torch.tensor, 
     task_activity: torch.tensor, 
-    num_workers: int,
     dataloader_dict: dict
 ) -> list[DataLoader]:
     """Implements the stochastic batching strategy where the task ratio of the data implies the ratio within one batch.
@@ -174,7 +169,6 @@ def _batching_data_stochastic(
         x (torch.tensor): x values with shape[0] = n.
         y (torch.tensor): y values with shape[0] = n.
         task_activity (torch.tensor): Associated task activty values with shape = (n).
-        num_workers (int): Number of workers in the torch.DataLoaders objects.
         dataloader_dict (dict): Dataloader configurations. (Currently allowed keys: batch_size (str), shuffle (str),
         batching_strategy (str))
 
@@ -183,6 +177,6 @@ def _batching_data_stochastic(
     """
 
     dataset = CustomDataset(x, y, task_activity)
-    data_loaders =  {'task_0': DataLoader(dataset, num_workers=num_workers, **dataloader_dict)}
+    data_loaders =  {'task_0': DataLoader(dataset, **dataloader_dict)}
 
     return data_loaders

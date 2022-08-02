@@ -57,10 +57,11 @@ def init_config_training(**kwargs):
     (by using default values when needed). """
 
     default_extraction_strings = {
-        'criterion': 'MSELoss',
-        'criterion_callback': None,
         'shuffle': True,
         'batch_size': 64,
+        'num_workers': 1,
+        'criterion': 'MSELoss',
+        'criterion_callback': None,
         'regularization_alpha': 0.1, 
         'regularization_ord': 2,
         'update_rule': 'Adam',
@@ -147,15 +148,16 @@ def init_config_trainer(**kwargs):
         'accelerator': 'auto',
         'strategy': 'ddp_find_unused_parameters_false',
         'devices': 'auto',
+        'gpus': 0,
         'auto_select_gpus': False,
         'deterministic': False,
         # 'default_root_dir'
-        # 'auto_lr_find': False
+        'auto_lr_find': False,
         # 'amp_backend'
         'fast_dev_run': False,
-        # 'precision'
+        'precision': 32,
         'enable_progress_bar': True,
-        'max_epochs': 512,
+        'max_epochs': 2,#512,
         'max_time': '00:08:00:00' # 00:12:00:00 - 12 hours
     }
 
