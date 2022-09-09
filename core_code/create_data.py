@@ -108,6 +108,7 @@ class CreateData():
             self.all_tasks = {0}
 
 
+
     def create_data(self, type: str) -> dict:
         """Data generating method based on the configuration in the config_data attribute creating the data
         set based on the tasks deduced from the data configuration.

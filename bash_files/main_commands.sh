@@ -23,7 +23,7 @@ config_trainer=(
     accelerator:auto
     strategy:ddp_find_unused_parameters_false
     num_nodes:1
-    gpus:8
+    gpus:1
     devices:auto
     auto_select_gpus:False
     deterministic:False
@@ -32,7 +32,8 @@ config_trainer=(
     fast_dev_run:False
     enable_progress_bar:True
     max_epochs:512
-    max_time:00:09:50:00 # 00:12:00:00 - 12 hours
+    max_time:00:04:50:00 # 00:12:00:00 - 12 hours
+    enable_checkpointing:False
 )
 
 #################################################
@@ -50,12 +51,11 @@ elif [ $run_type == "remote" ]; then
     cd $project_path_remote
 
     # ressource allocation
-    max_time="09:55" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
-    n_core="20" # number of core (large value implies low priority)
-    memory="2000" # memory allocation (in MB) per core (large value implies low priority)
-    gpu_memory="800"
+    max_time="4:55" # maximum time (hour:second") allocated for the job (max 120:00 / large value implies low priority)
+    n_core="1" # number of core (large value implies low priority)
+    memory="12000" # memory allocation (in MB) per core (large value implies low priority)
     scratch="0" # disk space (in MB) for temporary data per core
-    n_gpus="8"
+    n_gpus="1"
 
     # get the log filename
     log="${tag}_out.txt"
@@ -71,7 +71,8 @@ elif [ $run_type == "remote" ]; then
     tag=$tag'[1-'$num_configs']'
 
     # submit the job
-    bsub -G ls_math -J $tag -o $log -e $err -n $n_core -W $max_time -N -R "rusage[mem=$memory,ngpus_excl_p=$n_gpus]" -R "select[gpu_model0==NVIDIAGeForceRTX2080Ti,gpu_mtotal0>=$gpu_memory]" -R "span[ptile=36]" "python $project_path_remote/main.py --num_config \$LSB_JOBINDEX --experimentbatch_name $tag --config_trainer ${config_trainer[@]}"
+    bsub -G ls_math -J $tag -o $log -e $err -n $n_core -W $max_time -N -R "rusage[mem=$memory,ngpus_excl_p=$n_gpus]" "python $project_path_remote/main.py --num_config \$LSB_JOBINDEX --experimentbatch_name $tag --config_trainer ${config_trainer[@]}"
+    # bsub -J $tag -o $log -e $err -n $n_core -W $max_time -N -R "rusage[mem=$memory]" "python $project_path_remote/main.py --num_config \$LSB_JOBINDEX --experimentbatch_name $tag --config_trainer ${config_trainer[@]}"
 
     # display the current queue
     bbjobs
